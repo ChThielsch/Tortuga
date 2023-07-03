@@ -11,7 +11,6 @@ Step 2: Set up position, scale and color for the startpoint. Click "SET START PO
 Step 3: Click "RESET POSITION" to restore the default position.
 */
 
-
 using System;
 using System.Collections;
 using UnityEngine;
@@ -29,41 +28,30 @@ public class ElementTransition : MonoBehaviour
     [HideInInspector]
     public int maxAnimationSteps;
 
-
-
-
     [Header("CURVE")]
     public AnimationCurve curve;
     [HideInInspector]
     [Tooltip("Transition duration in Seconds")]
     public float duration = 2f;
 
-
-    //true if the animation needs to be played while time.deltatime=0
     [Header("PAUSE MENU")]
+    [Tooltip("true if the animation needs to be played while time.deltatime = 0")]
     public bool useInPauseMode;
 
     [HideInInspector]
     public bool transformTargetMode;
-
-
-
 
     [Header("MOVE TO TARGET")]
     [HideInInspector]
     public bool moveToTargt;
     [HideInInspector]
     public Transform target;
-
-
     private Coroutine co;
     private Coroutine loopCoroutine;
 
     [HideInInspector]
     public bool editMode;
-
     public bool playOnAwake;
-
 
     [HideInInspector]
     [Header("LIST POSITION")]
@@ -88,7 +76,6 @@ public class ElementTransition : MonoBehaviour
 
     [HideInInspector]
     public Quaternion rotation01;
-
 
     [HideInInspector]
     [Header("LIST DURATIONS")]
@@ -134,7 +121,6 @@ public class ElementTransition : MonoBehaviour
 
     private void Start()
     {
-
         if (cameraMode)
         {
             cam = GetComponent<CinemachineVirtualCamera>();
@@ -172,8 +158,6 @@ public class ElementTransition : MonoBehaviour
                     StopCoroutine(loopCoroutine);
                 }
 
-                //this.callback = callback;
-
                 co = StartCoroutine(Transition(index));
             }
         }
@@ -193,13 +177,7 @@ public class ElementTransition : MonoBehaviour
 
     public void JumpToPosition(int index)
     {
-
         animationStep = index;
-
-        if (cameraMode)
-        {
-            
-        }
 
         if (!excludePosition)
         {
@@ -236,7 +214,6 @@ public class ElementTransition : MonoBehaviour
     {
         if (gameObject.activeInHierarchy)
         {
-
             if (co != null)
             {
                 StopCoroutine(co);
@@ -277,19 +254,11 @@ public class ElementTransition : MonoBehaviour
         }
     }
 
-
-
-
     IEnumerator Transition(int index)
     {
         float timer = 0.0f;
-
         running = true;
-
         Vector3 scale01 = transform.localScale;
-
-
-
 
         //Check and Call AnimationEvents when animation starts
         if (animationevents.Length > 0)
@@ -303,15 +272,12 @@ public class ElementTransition : MonoBehaviour
             }
         }
 
-
         if (!excludePosition)
         {
             pos1 = transform.localPosition;
-
         }
 
         Quaternion rotation01 = transform.localRotation;
-
 
         if (!excludeColor)
         {
@@ -340,7 +306,6 @@ public class ElementTransition : MonoBehaviour
             }
             transform.localRotation = Quaternion.Lerp(rotation01, rotations[index], curves[index].Evaluate(timer / durations[index]));
             transform.localScale = Vector3.Lerp(scale01, scales[index], curves[index].Evaluate(timer / durations[index]));
-
 
             if (!excludeColor)
             {
@@ -372,21 +337,12 @@ public class ElementTransition : MonoBehaviour
             yield return null;
         }
 
-
-
-
         StopCoroutine(co);
-
-
-
 
         var tmpCallback = callback;
         callback = null;
         tmpCallback?.Invoke();
-
         JumpToPosition(index);
-
-
 
         running = false;
         if (deactivateWhenFinished)
@@ -396,7 +352,6 @@ public class ElementTransition : MonoBehaviour
         }
 
         //Check and Call AnimationEvents when animation ends
-
         if (animationevents.Length > 0)
         {
             foreach (AnimationEvent item in animationevents)
@@ -408,8 +363,7 @@ public class ElementTransition : MonoBehaviour
             }
         }
 
-
-        if(index !=loopPoints.x && index != loopPoints.y)
+        if (index != loopPoints.x && index != loopPoints.y)
         {
             loop = false;
         }
@@ -426,7 +380,6 @@ public class ElementTransition : MonoBehaviour
             }
         }
     }
-
 
     IEnumerator TransitionToTarget()
     {
@@ -451,21 +404,16 @@ public class ElementTransition : MonoBehaviour
             transform.localRotation = Quaternion.Lerp(rotation01, target.localRotation, curve.Evaluate(timer / duration));
             transform.localScale = Vector3.Lerp(scale01, target.localScale, curve.Evaluate(timer / duration));
 
-
-
-
             timer += Time.deltaTime;
 
             yield return null;
         }
+
         if (animationStep == callStep)
 
 
             StopCoroutine(co);
     }
-
-
-
 
     public void ToggleEditmode(bool active)
     {
@@ -479,7 +427,6 @@ public class ElementTransition : MonoBehaviour
 
     public void AddAnimation(int index)
     {
-
         if (GetComponent<RectTransform>() == null)
         {
             positions.Add(transform.localPosition);
@@ -513,12 +460,10 @@ public class ElementTransition : MonoBehaviour
         }
 
         maxAnimationSteps += index;
-
     }
 
     public void OverrideAnimation()
     {
-
         if (GetComponent<RectTransform>() == null)
         {
             positions[animationStep] = transform.localPosition;
@@ -531,7 +476,6 @@ public class ElementTransition : MonoBehaviour
             rotations[animationStep] = GetComponent<RectTransform>().localRotation;
             scales[animationStep] = GetComponent<RectTransform>().localScale;
         }
-
 
         durations[animationStep] = duration;
         curves[animationStep] = new AnimationCurve(curve.keys);
@@ -551,7 +495,6 @@ public class ElementTransition : MonoBehaviour
                 colors[animationStep] = GetComponent<TextMeshProUGUI>().color;
             }
         }
-
     }
 
     public void ResetAnimation()
@@ -608,8 +551,6 @@ public class ElementTransition : MonoBehaviour
             GetComponent<RectTransform>().localScale = scales[animationStep];
         }
 
-
-
         duration = durations[animationStep];
         curve.keys = curves[animationStep].keys;
 
@@ -628,8 +569,6 @@ public class ElementTransition : MonoBehaviour
                 GetComponent<TextMeshProUGUI>().color = colors[animationStep];
             }
         }
-
-
     }
 
     public void JumpToNextPosition()
@@ -643,13 +582,11 @@ public class ElementTransition : MonoBehaviour
             animationStep++;
         }
 
-
         if (GetComponent<RectTransform>() == null)
         {
             if (!excludePosition)
             {
                 transform.localPosition = positions[animationStep];
-
             }
             transform.localRotation = rotations[animationStep];
             transform.localScale = scales[animationStep];
@@ -659,12 +596,10 @@ public class ElementTransition : MonoBehaviour
             if (!excludePosition)
             {
                 GetComponent<RectTransform>().localPosition = positions[animationStep];
-
             }
             GetComponent<RectTransform>().localRotation = rotations[animationStep];
             GetComponent<RectTransform>().localScale = scales[animationStep];
         }
-
 
         duration = durations[animationStep];
         curve.keys = curves[animationStep].keys;
