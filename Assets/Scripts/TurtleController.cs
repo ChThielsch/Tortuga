@@ -5,8 +5,10 @@ using UnityEngine;
 public class TurtleController : MonoBehaviour
 {
     public Rigidbody myRigidbody;
+    public TurtleFin leftFin;
+    public TurtleFin rightFin;
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(myRigidbody.centerOfMass, 0.05f);
@@ -14,11 +16,12 @@ public class TurtleController : MonoBehaviour
 
     public void Swim()
     {
-
+        leftFin.Swim(myRigidbody);
+        rightFin.Swim(myRigidbody);
     }
 
     public void Move(Vector2 _input)
     {
-        
+
     }
 }
