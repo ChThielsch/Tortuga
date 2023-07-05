@@ -6,10 +6,12 @@ public class TurtleFin : MonoBehaviour
 {
     public Vector3 forceDirection;
     public float forceStrength;
+    public AnimationCurve paddleCurve;
 
 
     private ElementTransition m_swimAnimation;
     private Coroutine m_forceCoroutine;
+
     private void Awake()
     {
         m_swimAnimation = GetComponent<ElementTransition>();
@@ -24,13 +26,13 @@ public class TurtleFin : MonoBehaviour
     {
         if (m_forceCoroutine is null)
         {
-            m_forceCoroutine = StartCoroutine(SwimRoutine(_rigidbody));
+            m_forceCoroutine = StartCoroutine(SwimRoutine(_rigidbody, paddleCurve));
             m_swimAnimation.JumpToPosition(0);
             m_swimAnimation.PlayAnimation(1);
         }
     }
 
-    public IEnumerator SwimRoutine(Rigidbody _rigidbody)
+    public IEnumerator SwimRoutine(Rigidbody _rigidbody, AnimationCurve _curve)
     {
         float elapsedTime = 0f;
         float duration = 1f; // Duration in seconds
@@ -39,7 +41,9 @@ public class TurtleFin : MonoBehaviour
         while (elapsedTime < duration)
         {
             float normalizedTime = elapsedTime / duration;
-            float currentForceStrength = Mathf.Lerp(initialForceStrength, forceStrength, normalizedTime);
+            float curveValue = _curve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
+
+            float currentForceStrength = Mathf.Lerp(initialForceStrength, forceStrength, curveValue);
 
             _rigidbody.AddForceAtPosition(forceDirection.normalized * currentForceStrength, transform.position, ForceMode.Acceleration);
 

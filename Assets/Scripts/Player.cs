@@ -25,6 +25,10 @@ public class Player : MonoBehaviour
     private void Update()
     {
         m_movementInput = movementReference.action.ReadValue<Vector2>();
+    }
+
+    private void FixedUpdate()
+    {
         m_turtleController.Move(m_movementInput);
     }
 }
