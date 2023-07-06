@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TurtleFin : MonoBehaviour
 {
-    public Vector3 forceDirection;
+    public Transform forceDirectionTransform;
     public float forceStrength;
     public AnimationCurve paddleCurve;
 
@@ -19,7 +19,9 @@ public class TurtleFin : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        DrawArrow.ForGizmo(transform.position, transform.position + forceDirection, Color.green);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, forceDirectionTransform.position);
+        Gizmos.DrawSphere(forceDirectionTransform.position, 0.05f);
     }
 
     public void Swim(Rigidbody _rigidbody)
@@ -35,7 +37,7 @@ public class TurtleFin : MonoBehaviour
     public IEnumerator SwimRoutine(Rigidbody _rigidbody, AnimationCurve _curve)
     {
         float elapsedTime = 0f;
-        float duration = 1f; // Duration in seconds
+        float duration = 1.25f; // Duration in seconds
         float initialForceStrength = 0f; // Initial force strength
 
         while (elapsedTime < duration)
@@ -45,12 +47,24 @@ public class TurtleFin : MonoBehaviour
 
             float currentForceStrength = Mathf.Lerp(initialForceStrength, forceStrength, curveValue);
 
-            _rigidbody.AddForceAtPosition(forceDirection.normalized * currentForceStrength, transform.position, ForceMode.Acceleration);
+            _rigidbody.AddForceAtPosition(CalculateForce(transform, forceDirectionTransform) * currentForceStrength, transform.position, ForceMode.Acceleration);
 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
         m_forceCoroutine = null;
+    }
+
+    private Vector3 CalculateForce(Transform sourceTransform, Transform targetTransform)
+    {
+        // Calculate the direction between the two transforms
+        Vector3 direction = targetTransform.position - sourceTransform.position;
+
+        // Normalize the direction vector
+        direction.Normalize();
+
+        // Return the normalized direction as a force
+        return direction;
     }
 }
