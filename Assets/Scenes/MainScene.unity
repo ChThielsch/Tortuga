@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2157.847, g: 2262.381, b: 3286.0356, a: 1}
+  m_IndirectSpecularColor: {r: 2158.3274, g: 2262.8635, b: 3286.4263, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1295,7 +1295,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 733603331}
-  m_LocalRotation: {x: 0.29316425, y: -0.000034279758, z: 0.00001051145, w: 0.95606214}
+  m_LocalRotation: {x: 0.21686411, y: -0.6433316, z: 0.19726935, w: 0.70723355}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1500,7 +1500,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 0
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
@@ -1539,12 +1539,12 @@ MonoBehaviour:
   myRigidbody: {fileID: 798341469}
   leftFin: {fileID: 274713270}
   rightFin: {fileID: 1507124464}
-  rotationSpeed: 60
+  rotationSpeed: 1
   rotationDamping: 2
   maxXRotationAngle: 45
   maxYRotationAngle: 15
   minZRotationAngle: -45
-  maxZRotationAngle: 25
+  maxZRotationAngle: 45
   maxXForce: 20
   maxZForce: 40
 --- !u!136 &798341472
@@ -1647,7 +1647,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806125438}
-  m_LocalRotation: {x: 0.34042525, y: -0.000033745942, z: 0.000012217714, w: 0.9402716}
+  m_LocalRotation: {x: 0.2518248, y: -0.63270617, z: 0.22907121, w: 0.69555277}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1794,7 +1794,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 839545872}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.00021523413, y: 12.5, z: -3}
+  m_LocalPosition: {x: 2.986598, y: 12.5, z: -0.28325558}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2626,8 +2626,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1823688464}
-  m_LocalRotation: {x: 0.2931643, y: -0.00003426331, z: 0.000010506408, w: 0.95606214}
-  m_LocalPosition: {x: 0.00021523413, y: 12.5, z: -3}
+  m_LocalRotation: {x: 0.2168641, y: -0.6433316, z: 0.19726942, w: 0.7072336}
+  m_LocalPosition: {x: 2.986598, y: 12.5, z: -0.28325558}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2814,7 +2814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1974647283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3151,7 +3151,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2051699835}
-  m_LocalRotation: {x: 0.24611636, y: -0.000034750286, z: 0.000008824039, w: 0.9692403}
+  m_LocalRotation: {x: 0.1820611, y: -0.65219915, z: 0.16561101, w: 0.71698195}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
     {
         m_movementInput = movementReference.action.ReadValue<Vector2>();
 
-        if (transform.position.y <= bottomConstrain || (holdToSwim && m_swimInput))
+        if (transform.position.y <= bottomConstrain || (holdToSwim && m_swimInput && transform.position.y < topConstrain))
         {
             m_turtleController.Swim();
         }
