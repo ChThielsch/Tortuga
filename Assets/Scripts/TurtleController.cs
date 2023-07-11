@@ -11,20 +11,31 @@ public class TurtleController : MonoBehaviour
     public TurtleFin rightFin;
 
     [Header("Rotation")]
-    public float RotationSpeedX = 45f;
-    public float RotationSpeedY = 45f;
-    public float RotationSpeedZ = 45f;
+    [Range(0f, 1f)]
+    public float RotationSpeedX = 1f;
+    [Range(0f, 1f)]
+    public float RotationSpeedY = 1f;
+    [Range(0f, 1f)]
+    public float RotationSpeedZ = 1f;
+    [Range(0f, 90f)]
     public float maxAngleX = 45;
+    [Range(0f, 90f)]
     public float maxAngleY = 15;
-    public float minAngleZ = -45;
-    public float maxAngleZ = 25;
+    [Range(0f, 90f)]
+    public float minAngleZ = 25;
+    [Range(0f, 90f)]
+    public float maxAngleZ = 45;
     [Header("Top Down")]
+    [Range(0f, 100f)]
     public float TopDownRotationSpeed = 20;
+    [Range(0f, 90f)]
     public float TopDownMaxAngleX = 45;
 
 
     [Header("Force")]
+    [Range(0f, 100f)]
     public float maxForceX = 20;
+    [Range(0f, 100f)]
     public float maxForceZ = 40;
 
     private void OnDrawGizmos()
@@ -120,10 +131,12 @@ public class TurtleController : MonoBehaviour
 
     private void MoveForward(Vector2 _input)
     {
+        _input *= -1;
+
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = -_input.x * maxAngleX;
+        float targetRotationX = _input.x * maxAngleX;
         float targetRotationY = _input.x * maxAngleY;
-        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * -minAngleZ;
+        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * minAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -131,7 +144,7 @@ public class TurtleController : MonoBehaviour
         // Calculate the new euler angles based on the target and current angles
         Vector3 newEulerAngles = new Vector3(
             Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, RotationSpeedX * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.y, targetRotationY, RotationSpeedY * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.y, -targetRotationY, RotationSpeedY * Time.fixedDeltaTime),
             Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, RotationSpeedZ * Time.fixedDeltaTime)
         );
 
@@ -141,9 +154,11 @@ public class TurtleController : MonoBehaviour
 
     private void MoveFree(Vector2 _input)
     {
+        _input *= -1;
+
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = -_input.x * maxAngleX;
-        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * -minAngleZ;
+        float targetRotationX = _input.x * maxAngleX;
+        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * minAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -151,7 +166,7 @@ public class TurtleController : MonoBehaviour
         // Calculate the new euler angles based on the target and current angles
         Vector3 newEulerAngles = new Vector3(
             Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, RotationSpeedX * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.y, currentEulerAngles.y + _input.x * RotationSpeedY * 100 * Time.fixedDeltaTime, RotationSpeedY * 100 * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.y, currentEulerAngles.y + -_input.x * RotationSpeedY * 100 * Time.fixedDeltaTime, RotationSpeedY * 100 * Time.fixedDeltaTime),
             Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, RotationSpeedZ * Time.fixedDeltaTime)
         );
 
