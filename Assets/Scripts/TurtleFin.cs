@@ -6,8 +6,9 @@ public class TurtleFin : MonoBehaviour
 {
     public Transform forceDirectionTransform;
     public float forceStrength;
+    public float swimDuration = 1.25f;
     public AnimationCurve paddleCurve;
-
+    public TurtleController turtleController;
 
     private ElementTransition m_swimAnimation;
     private Coroutine m_forceCoroutine;
@@ -24,30 +25,38 @@ public class TurtleFin : MonoBehaviour
         Gizmos.DrawSphere(forceDirectionTransform.position, 0.05f);
     }
 
-    public void Swim(Rigidbody _rigidbody)
+    public void Swim()
     {
         if (m_forceCoroutine is null)
         {
-            m_forceCoroutine = StartCoroutine(SwimRoutine(_rigidbody, paddleCurve));
+            m_forceCoroutine = StartCoroutine(SwimRoutine());
             m_swimAnimation.JumpToPosition(0);
             m_swimAnimation.PlayAnimation(1);
         }
     }
 
-    public IEnumerator SwimRoutine(Rigidbody _rigidbody, AnimationCurve _curve)
+    public IEnumerator SwimRoutine()
     {
-        float elapsedTime = 0f;
-        float duration = 1.25f; // Duration in seconds
+        float elapsedTime = 0f;   
         float initialForceStrength = 0f; // Initial force strength
 
-        while (elapsedTime < duration)
+        while (elapsedTime < swimDuration)
         {
-            float normalizedTime = elapsedTime / duration;
-            float curveValue = _curve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
+            float normalizedTime = elapsedTime / swimDuration;
+            float curveValue = paddleCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
 
             float currentForceStrength = Mathf.Lerp(initialForceStrength, forceStrength, curveValue);
 
-            _rigidbody.AddForceAtPosition(CalculateForce(transform, forceDirectionTransform) * currentForceStrength, transform.position, ForceMode.Acceleration);
+            if (turtleController.movementType == TurtleController.MovementType.TopDown)
+            {
+                // Apply force in the direction the turtle is facing
+                turtleController.myRigidbody.AddForce(turtleController.transform.right * currentForceStrength, ForceMode.Acceleration);
+            }
+            else
+            {
+                // Apply force in the force direction
+                turtleController.myRigidbody.AddForceAtPosition(CalculateForce(transform, forceDirectionTransform) * currentForceStrength, transform.position, ForceMode.Acceleration);
+            }
 
             elapsedTime += Time.deltaTime;
             yield return null;
