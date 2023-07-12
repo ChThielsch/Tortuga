@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2158.2756, g: 2260.555, b: 3278.3599, a: 1}
+  m_IndirectSpecularColor: {r: 2158.26, g: 2260.5393, b: 3278.3599, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1914,10 +1914,10 @@ MonoBehaviour:
   maxAngleY: 15
   minAngleZ: 45
   maxAngleZ: 25
-  TopDownRotationSpeed: 60
+  TopDownRotationSpeed: 1
   TopDownMaxAngleX: 45
-  maxForceX: 400
-  maxForceZ: 200
+  maxForceX: 100
+  maxForceZ: 100
 --- !u!136 &798341472
 CapsuleCollider:
   m_ObjectHideFlags: 0

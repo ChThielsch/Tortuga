@@ -11,11 +11,11 @@ public class TurtleController : MonoBehaviour
     public TurtleFin rightFin;
 
     [Header("Rotation")]
-    [Range(0f, 1f)]
+    [Range(0f, 5f)]
     public float RotationSpeedX = 1f;
-    [Range(0f, 1f)]
+    [Range(0f, 5f)]
     public float RotationSpeedY = 1f;
-    [Range(0f, 1f)]
+    [Range(0f, 5f)]
     public float RotationSpeedZ = 1f;
     [Range(0f, 90f)]
     public float maxAngleX = 45;
@@ -26,7 +26,7 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 90f)]
     public float maxAngleZ = 45;
     [Header("Top Down")]
-    [Range(0f, 100f)]
+    [Range(0f, 5f)]
     public float TopDownRotationSpeed = 20;
     [Range(0f, 90f)]
     public float TopDownMaxAngleX = 45;
@@ -176,39 +176,38 @@ public class TurtleController : MonoBehaviour
 
     private void MoveTopDown(Vector2 _input)
     {
+        // Calculate the target angle in the Y-axis based on the input vector
         float targetAngleY = Mathf.Atan2(_input.x, _input.y) * Mathf.Rad2Deg;
 
-        Quaternion targetRotation = Quaternion.Euler(0f, targetAngleY, 0f);
+        // Get the current euler angles of the rigidbody's rotation
+        Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
 
-        Quaternion currentRotation = myRigidbody.rotation;
+        // Determine the direction of rotation by calculating the difference between current and target angles
+        float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
-        // Determine the direction of rotation
-        float rotationDifference = Mathf.DeltaAngle(currentRotation.eulerAngles.y, targetRotation.eulerAngles.y);
-        float targetAngleX = 0;
-        if (rotationDifference == 0 || _input == Vector2.zero)
-        {
-            targetAngleX = 0;
-        }
-        else if (rotationDifference < 0f)
-        {
-            targetAngleX = TopDownMaxAngleX;
-        }
-        else
-        {
-            targetAngleX = -TopDownMaxAngleX;
-        }
+        // Clamp the rotation difference to the maximum allowed angle in the X-axis
+        float targetAngleX = Mathf.Clamp(-rotationDifference, -TopDownMaxAngleX, TopDownMaxAngleX);
 
+        // Set the new euler angles with a gradual lerp towards zero rotation in the X-axis
+        Vector3 newEulerAngles = new Vector3(
+            Mathf.LerpAngle(currentEulerAngles.x, 0, TopDownRotationSpeed * Time.deltaTime),
+            myRigidbody.rotation.eulerAngles.y,
+            currentEulerAngles.z);
+
+        // If there is input (movement), update the new euler angles with interpolation towards the target angles
         if (_input != Vector2.zero)
         {
-            targetRotation = Quaternion.Euler(targetAngleX, targetAngleY, 0f);
-            myRigidbody.MoveRotation(Quaternion.RotateTowards(currentRotation, targetRotation, TopDownRotationSpeed * Time.deltaTime));
+            newEulerAngles = new Vector3(
+                Mathf.LerpAngle(currentEulerAngles.x, targetAngleX, TopDownRotationSpeed * Time.deltaTime),
+                Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, TopDownRotationSpeed * Time.deltaTime),
+                0f
+            );
         }
-        else
-        {
-            Quaternion XTargetRotation = Quaternion.Euler(targetAngleX, currentRotation.eulerAngles.y, 0f);
-            myRigidbody.MoveRotation(Quaternion.RotateTowards(currentRotation, XTargetRotation, TopDownRotationSpeed * Time.deltaTime));
-        }
+
+        // Apply the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
+        myRigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
     }
+
 
 
     private void ApplyForceBasedOnRotation()
