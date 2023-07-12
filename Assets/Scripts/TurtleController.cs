@@ -208,8 +208,6 @@ public class TurtleController : MonoBehaviour
         myRigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
     }
 
-
-
     private void ApplyForceBasedOnRotation()
     {
         Vector3 eulerAngles = transform.eulerAngles;
