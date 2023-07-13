@@ -92,9 +92,12 @@ public class TurtleController : MonoBehaviour
 
             case (int)MovementType.Forward:
             case (int)MovementType.Free:
-            default:
                 CameraManager.instance.ActiveThirdPersonCamera();
                 myRigidbody.useGravity = true;
+                break;
+            default:
+                CameraManager.instance.ActiveThirdPersonCamera();
+                myRigidbody.useGravity = false;
                 break;
         }
     }

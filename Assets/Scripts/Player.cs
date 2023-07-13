@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     private Vector2 m_movementInput;
     private bool m_swimInput;
 
-    private void OnEnable()
+    private void Start()
     {
         m_turtleController = GetComponent<TurtleController>();
         InitiateInput();
