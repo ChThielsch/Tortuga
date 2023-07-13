@@ -3492,15 +3492,22 @@ MonoBehaviour:
   myRigidbody: {fileID: 798341469}
   leftFin: {fileID: 274713270}
   rightFin: {fileID: 1507124464}
-  RotationSpeedX: 1
-  RotationSpeedY: 0.5
-  RotationSpeedZ: 0.75
-  maxAngleX: 45
-  maxAngleY: 15
-  minAngleZ: 45
-  maxAngleZ: 25
-  TopDownRotationSpeed: 2
-  TopDownMaxAngleX: 45
+  forwardRotationSpeedX: 1
+  forwardRotationSpeedY: 1
+  forwardRotationSpeedZ: 1
+  forwardMaxAngleX: 45
+  forwardMaxAngleY: 15
+  forwardMinAngleZ: 25
+  forwardMaxAngleZ: 45
+  freeRotationSpeedX: 1
+  freeRotationSpeedY: 1
+  freeRotationSpeedZ: 1
+  freeMaxAngleX: 45
+  freeMaxAngleY: 15
+  freeMinAngleZ: 25
+  freeMaxAngleZ: 45
+  topDownRotationSpeed: 5
+  topDownMaxAngleX: 45
   maxForceX: 100
   maxForceZ: 100
 --- !u!136 &798341472
@@ -3603,7 +3610,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806125438}
-  m_LocalRotation: {x: 0.2518248, y: -0.63270617, z: 0.22907124, w: 0.6955527}
+  m_LocalRotation: {x: 0.25182477, y: -0.63270617, z: 0.22907123, w: 0.6955527}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7241,7 +7248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2010217403
 MonoBehaviour:
   m_ObjectHideFlags: 0

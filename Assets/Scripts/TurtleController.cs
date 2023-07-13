@@ -9,34 +9,49 @@ public class TurtleController : MonoBehaviour
     public Rigidbody myRigidbody;
     public TurtleFin leftFin;
     public TurtleFin rightFin;
-
-    [Header("Rotation")]
-    [Range(0f, 5f)]
-    public float RotationSpeedX = 1f;
-    [Range(0f, 5f)]
-    public float RotationSpeedY = 1f;
-    [Range(0f, 5f)]
-    public float RotationSpeedZ = 1f;
-    [Range(0f, 90f)]
-    public float maxAngleX = 45;
-    [Range(0f, 90f)]
-    public float maxAngleY = 15;
-    [Range(0f, 90f)]
-    public float minAngleZ = 25;
-    [Range(0f, 90f)]
-    public float maxAngleZ = 45;
-    [Header("Top Down")]
-    [Range(0f, 5f)]
-    public float TopDownRotationSpeed = 20;
-    [Range(0f, 90f)]
-    public float TopDownMaxAngleX = 45;
-
-
     [Header("Force")]
     [Range(0f, 100f)]
     public float maxForceX = 20;
     [Range(0f, 100f)]
     public float maxForceZ = 40;
+
+    [Divider("Forward")]
+    [Range(0f, 5f)]
+    public float forwardRotationSpeedX = 1f;
+    [Range(0f, 5f)]
+    public float forwardRotationSpeedY = 1f;
+    [Range(0f, 5f)]
+    public float forwardRotationSpeedZ = 1f;
+    [Range(0f, 90f)]
+    public float forwardMaxAngleX = 45;
+    [Range(0f, 90f)]
+    public float forwardMaxAngleY = 15;
+    [Range(0f, 90f)]
+    public float forwardMinAngleZ = 25;
+    [Range(0f, 90f)]
+    public float forwardMaxAngleZ = 45;
+
+    [Divider("Free")]
+    [Range(0f, 5f)]
+    public float freeRotationSpeedX = 1f;
+    [Range(0f, 5f)]
+    public float freeRotationSpeedY = 1f;
+    [Range(0f, 5f)]
+    public float freeRotationSpeedZ = 1f;
+    [Range(0f, 90f)]
+    public float freeMaxAngleX = 45;
+    [Range(0f, 90f)]
+    public float freeMaxAngleY = 15;
+    [Range(0f, 90f)]
+    public float freeMinAngleZ = 25;
+    [Range(0f, 90f)]
+    public float freeMaxAngleZ = 45;
+
+    [Divider("Top Down")]
+    [Range(0f, 5f)]
+    public float topDownRotationSpeed = 20;
+    [Range(0f, 90f)]
+    public float topDownMaxAngleX = 45;
 
     private void OnDrawGizmos()
     {
@@ -137,18 +152,18 @@ public class TurtleController : MonoBehaviour
         _input *= -1;
 
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = _input.x * maxAngleX;
-        float targetRotationY = _input.x * maxAngleY;
-        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * minAngleZ;
+        float targetRotationX = _input.x * forwardMaxAngleX;
+        float targetRotationY = _input.x * forwardMaxAngleY;
+        float targetRotationZ = (_input.y > 0) ? _input.y * forwardMaxAngleZ : _input.y * forwardMinAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
 
         // Calculate the new euler angles based on the target and current angles
         Vector3 newEulerAngles = new Vector3(
-            Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, RotationSpeedX * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.y, -targetRotationY, RotationSpeedY * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, RotationSpeedZ * Time.fixedDeltaTime)
+            Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, forwardRotationSpeedX * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.y, -targetRotationY, forwardRotationSpeedY * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, forwardRotationSpeedZ * Time.fixedDeltaTime)
         );
 
         // Apply the rotation
@@ -160,17 +175,17 @@ public class TurtleController : MonoBehaviour
         _input *= -1;
 
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = _input.x * maxAngleX;
-        float targetRotationZ = (_input.y > 0) ? _input.y * maxAngleZ : _input.y * minAngleZ;
+        float targetRotationX = _input.x * freeMaxAngleX;
+        float targetRotationZ = (_input.y > 0) ? _input.y * freeMaxAngleZ : _input.y * freeMinAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
 
         // Calculate the new euler angles based on the target and current angles
         Vector3 newEulerAngles = new Vector3(
-            Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, RotationSpeedX * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.y, currentEulerAngles.y + -_input.x * RotationSpeedY * 100 * Time.fixedDeltaTime, RotationSpeedY * 100 * Time.fixedDeltaTime),
-            Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, RotationSpeedZ * Time.fixedDeltaTime)
+            Mathf.LerpAngle(currentEulerAngles.x, targetRotationX, freeRotationSpeedX * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.y, currentEulerAngles.y + -_input.x * freeRotationSpeedY * 100 * Time.fixedDeltaTime, freeRotationSpeedY * 100 * Time.fixedDeltaTime),
+            Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, freeRotationSpeedZ * Time.fixedDeltaTime)
         );
 
         // Apply the rotation
@@ -189,11 +204,11 @@ public class TurtleController : MonoBehaviour
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
-        float targetAngleX = Mathf.Clamp(-rotationDifference, -TopDownMaxAngleX, TopDownMaxAngleX);
+        float targetAngleX = Mathf.Clamp(-rotationDifference, -topDownMaxAngleX, topDownMaxAngleX);
 
         // Set the new euler angles with a gradual lerp towards zero rotation in the X-axis
         Vector3 newEulerAngles = new Vector3(
-            Mathf.LerpAngle(currentEulerAngles.x, 0, TopDownRotationSpeed * Time.deltaTime),
+            Mathf.LerpAngle(currentEulerAngles.x, 0, topDownRotationSpeed * Time.deltaTime),
             myRigidbody.rotation.eulerAngles.y,
             currentEulerAngles.z);
 
@@ -201,8 +216,8 @@ public class TurtleController : MonoBehaviour
         if (_input != Vector2.zero)
         {
             newEulerAngles = new Vector3(
-                Mathf.LerpAngle(currentEulerAngles.x, targetAngleX, TopDownRotationSpeed * Time.deltaTime),
-                Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, TopDownRotationSpeed * Time.deltaTime),
+                Mathf.LerpAngle(currentEulerAngles.x, targetAngleX, topDownRotationSpeed * Time.deltaTime),
+                Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, topDownRotationSpeed * Time.deltaTime),
                 0f
             );
         }
