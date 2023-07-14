@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class MementoDisplay : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
@@ -24,6 +25,7 @@ public class MementoDisplay : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
     }
 
     public RectTransform rect;
+    public Image image;
     public Vector2 restPos;
     public MementoBoxDisplay box;
     public int index;
@@ -41,7 +43,8 @@ public class MementoDisplay : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         this.box = box;
         this.index = index;
         option= box.page.mementos[index];
-        GetComponent<RectTransform>().sizeDelta = (Vector2.one * 225)*option.dimensions;
+        image.sprite = option.picture;
+        rect.sizeDelta = (Vector2.one * 225)*option.dimensions;
         gameObject.SetActive(true);
     }
     public void Close()

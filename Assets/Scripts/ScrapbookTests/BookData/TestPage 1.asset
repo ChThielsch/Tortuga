@@ -16,15 +16,15 @@ MonoBehaviour:
     tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
     quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
   mementos:
-  - picture: {fileID: 0}
-    dimensions: {x: 1, y: 1}
+  - picture: {fileID: 21300000, guid: e484d16f534a28349a395c2312900185, type: 3}
+    dimensions: {x: 2, y: 1}
     story: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
       incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
       nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
-  - picture: {fileID: 0}
+  - picture: {fileID: 21300000, guid: af73ee80b52b60642888b8c51d0c9737, type: 3}
     dimensions: {x: 1, y: 2}
     story: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -32,8 +32,8 @@ MonoBehaviour:
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
       incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
       nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
-  - picture: {fileID: 0}
-    dimensions: {x: 2, y: 2}
+  - picture: {fileID: 21300000, guid: 3abc95683e5d359489780760c806d6b6, type: 3}
+    dimensions: {x: 2, y: 1}
     story: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
@@ -41,4 +41,4 @@ MonoBehaviour:
       incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
       nostrud exercitation ullamco laboris nisi ut aliquip ex ea consequat.
   pickedMementoIndex: 1
-  mementoPos: {x: 2, y: 1}
+  mementoPos: {x: 0, y: 0}
