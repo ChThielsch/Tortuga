@@ -52,9 +52,8 @@ public class Player : MonoBehaviour
             turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
 
-        Debug.LogError(m_movementInput);
-        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.x);
-        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.y);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.x);
     }
 
     private void FixedUpdate()

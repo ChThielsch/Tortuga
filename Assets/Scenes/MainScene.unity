@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2158.2756, g: 2260.555, b: 3278.3286, a: 1}
+  m_IndirectSpecularColor: {r: 2158.307, g: 2260.5706, b: 3278.438, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -16574,7 +16574,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438304241}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -20012,7 +20012,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 521533218}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -25002,7 +25002,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713502651}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -27694,6 +27694,7 @@ GameObject:
   - component: {fileID: 839545874}
   - component: {fileID: 839545873}
   - component: {fileID: 839545875}
+  - component: {fileID: 839545876}
   m_Layer: 0
   m_Name: FreeLookCamera
   m_TagString: Untagged
@@ -27847,6 +27848,36 @@ MonoBehaviour:
   AutoEnableInputs: 1
   XYAxis: {fileID: 2850611683010421183, guid: ec252b6f93dcd6c4f8bfc7010364ea07, type: 3}
   ZAxis: {fileID: 0}
+--- !u!114 &839545876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839545872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 1
+  m_IgnoreTag: 
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_MinimumDistanceFromTarget: 0.1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 0
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 1
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0
+  m_DampingWhenOccluded: 0
+  m_OptimalTargetDistance: 0
 --- !u!1 &840555772
 GameObject:
   m_ObjectHideFlags: 0
@@ -54860,7 +54891,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1624636158}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -72135,17 +72166,17 @@ PrefabInstance:
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
@@ -72155,7 +72186,7 @@ PrefabInstance:
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.41
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
@@ -72196,6 +72227,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3571783665539200184, guid: 337ff121bf161294ba4003f0bc8beac0,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4240797645052964354, guid: 337ff121bf161294ba4003f0bc8beac0,
         type: 3}
