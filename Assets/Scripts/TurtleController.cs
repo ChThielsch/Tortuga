@@ -138,7 +138,7 @@ public class TurtleController : MonoBehaviour
         Vector3 currentDirection = splineCurrent.direction;
         float currentForce = splineCurrent.force;
 
-        Quaternion currentRotation = new Quaternion();
+        Quaternion currentRotation = Quaternion.identity;
         bool inCurrent = currentDirection != Vector3.zero;
 
         if (inCurrent)
@@ -151,10 +151,13 @@ public class TurtleController : MonoBehaviour
         else
         {
             // Enable gravity if there is no current direction
-            myRigidbody.useGravity = true;
+            if (movementType != MovementType.TopDown && movementType != MovementType.Idle)
+            {
+                myRigidbody.useGravity = true;
+            }
         }
 
-        Quaternion movementRotation = new Quaternion();
+        Quaternion movementRotation = Quaternion.identity;
         switch (movementType)
         {
             case MovementType.Forward:
@@ -179,7 +182,7 @@ public class TurtleController : MonoBehaviour
         myRigidbody.AddForce(totalForce);
 
         // Weight the rotation between the current rotation and the movement rotation
-        Quaternion finalRotation = new Quaternion();
+        Quaternion finalRotation = Quaternion.identity;
         if (inCurrent)
         {
             finalRotation = WeightRotation(currentRotation, movementRotation, rotationWeight);
