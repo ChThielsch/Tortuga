@@ -1049,7 +1049,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 54383340}
-  m_Mesh: {fileID: 4300000, guid: 5357acbdf6d87d946a4d27683c4da50a, type: 2}
+  m_Mesh: {fileID: 4300000, guid: e9d51894e84892845bd974c2b83357ff, type: 2}
 --- !u!1001 &401319972
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1498,7 +1498,7 @@ GameObject:
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!135 &895505060
 SphereCollider:
   m_ObjectHideFlags: 0
