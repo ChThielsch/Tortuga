@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
 {
     public InputActionReference swimReference;
     public InputActionReference movementReference;
-
+    [Space]
+    public Animator turtleAnimator;
+    [Space]
     public float topConstrain;
     public float bottomConstrain;
     public bool holdToSwim;
@@ -30,6 +32,7 @@ public class Player : MonoBehaviour
             if (transform.position.y < topConstrain)
             {
                 m_turtleController.Swim();
+                turtleAnimator.SetTrigger(Constants.AnimatorPush);
             }
         };
 
@@ -46,7 +49,12 @@ public class Player : MonoBehaviour
         if (transform.position.y <= bottomConstrain || (holdToSwim && m_swimInput && transform.position.y < topConstrain))
         {
             m_turtleController.Swim();
+            turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
+
+        Debug.LogError(m_movementInput);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.x);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.y);
     }
 
     private void FixedUpdate()

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6609094342005917446}
   - component: {fileID: 1884269427653538595}
   - component: {fileID: 232478836104268834}
+  - component: {fileID: 4927313585257929669}
   m_Layer: 0
   m_Name: SplineCurrent
   m_TagString: Untagged
@@ -927,3 +928,21 @@ MonoBehaviour:
   m_Capped: 1
   m_Radius: 1.5
   m_Range: {x: 0, y: 1}
+--- !u!114 &4927313585257929669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3973171428902976018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b37ee5619efd2d744b97d740b0043d3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultForce: 1
+  currentForce: 0
+  minNoiseMultiplier: 0.75
+  maxNoiseMultiplier: 1.25
+  minNoiseTransitionTime: 5
+  maxNoiseTransitionTime: 15

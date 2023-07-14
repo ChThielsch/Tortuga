@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TurtleController : MonoBehaviour, IFloatingObject
+public class TurtleController : MonoBehaviour
 {
     public enum MovementType { Idle, Forward, Free, TopDown }
 
@@ -14,6 +14,9 @@ public class TurtleController : MonoBehaviour, IFloatingObject
     public float maxForceX = 20;
     [Range(0f, 500f)]
     public float maxForceZ = 40;
+    [Space]
+    [Range(0f, 1f)]
+    public float rotationWeight = 0.5f;
 
     [Divider("Forward")]
     [Range(0f, 5f)]
@@ -129,27 +132,68 @@ public class TurtleController : MonoBehaviour, IFloatingObject
     /// <param name="_input">The input vector used to calculate the target rotation.</param>
     public void Move(Vector2 _input)
     {
+        // Get the current direction and force from the spline at the turtle's position
+        (Vector3 direction, float force) splineCurrent = SplineCurrentLink.GetAffectedDirection(transform.position);
+
+        Vector3 currentDirection = splineCurrent.direction;
+        float currentForce = splineCurrent.force;
+
+        Quaternion currentRotation = new Quaternion();
+        bool inCurrent = currentDirection != Vector3.zero;
+
+        if (inCurrent)
+        {
+            // Disable gravity if there is a current direction
+            myRigidbody.useGravity = false;
+            // Calculate the rotation towards the current direction
+            currentRotation = RotateTowardsDirection(currentDirection);
+        }
+        else
+        {
+            // Enable gravity if there is no current direction
+            myRigidbody.useGravity = true;
+        }
+
+        Quaternion movementRotation = new Quaternion();
         switch (movementType)
         {
             case MovementType.Forward:
-                MoveForward(_input);
-                ApplyForceBasedOnRotation();
+                // Calculate the rotation for forward movement
+                movementRotation = GetForwardRotation(_input);
                 break;
             case MovementType.Free:
-                MoveFree(_input);
-                ApplyForceBasedOnRotation();
+                // Calculate the rotation for free movement
+                movementRotation = GretFreeRotation(_input);
                 break;
             case MovementType.TopDown:
-                MoveTopDown(_input);
+                // Calculate the rotation for top-down movement
+                movementRotation = GetTopDownRotation(_input);
                 break;
             default:
                 break;
         }
 
-        ApplyCurrent(SplineCurrentLink.GetAffectedDirection(transform.position));
+        // Calculate the total force to be applied, which includes the current force and force based on rotation
+        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
+        // Apply the force to the Rigidbody
+        myRigidbody.AddForce(totalForce);
+
+        // Weight the rotation between the current rotation and the movement rotation
+        Quaternion finalRotation = new Quaternion();
+        if (inCurrent)
+        {
+            finalRotation = WeightRotation(currentRotation, movementRotation, rotationWeight);
+        }
+        else
+        {
+            finalRotation = movementRotation;
+        }
+
+        // Move the Rigidbody to the weighted rotation
+        myRigidbody.MoveRotation(finalRotation);
     }
 
-    private void MoveForward(Vector2 _input)
+    private Quaternion GetForwardRotation(Vector2 _input)
     {
         _input *= -1;
 
@@ -168,11 +212,11 @@ public class TurtleController : MonoBehaviour, IFloatingObject
             Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, forwardRotationSpeedZ * Time.fixedDeltaTime)
         );
 
-        // Apply the rotation
-        myRigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
+        // Return the rotation
+        return Quaternion.Euler(newEulerAngles);
     }
 
-    private void MoveFree(Vector2 _input)
+    private Quaternion GretFreeRotation(Vector2 _input)
     {
         _input *= -1;
 
@@ -190,11 +234,11 @@ public class TurtleController : MonoBehaviour, IFloatingObject
             Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, freeRotationSpeedZ * Time.fixedDeltaTime)
         );
 
-        // Apply the rotation
-        myRigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
+        // Return the rotation
+        return Quaternion.Euler(newEulerAngles);
     }
 
-    private void MoveTopDown(Vector2 _input)
+    private Quaternion GetTopDownRotation(Vector2 _input)
     {
         // Calculate the target angle in the Y-axis based on the input vector
         float targetAngleY = Mathf.Atan2(_input.x, _input.y) * Mathf.Rad2Deg;
@@ -224,11 +268,11 @@ public class TurtleController : MonoBehaviour, IFloatingObject
             );
         }
 
-        // Apply the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
-        myRigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
+        // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
+        return Quaternion.Euler(newEulerAngles);
     }
 
-    private void ApplyForceBasedOnRotation()
+    private Vector3 GetForceBasedOnRotation()
     {
         Vector3 eulerAngles = transform.eulerAngles;
 
@@ -244,7 +288,7 @@ public class TurtleController : MonoBehaviour, IFloatingObject
         // Set the y component of the force to 0
         localFloatingForce.y = 0f;
 
-        myRigidbody.AddForce(localFloatingForce);
+        return localFloatingForce;
     }
 
     public static float ConvertAngleToRange(float angle)
@@ -257,13 +301,29 @@ public class TurtleController : MonoBehaviour, IFloatingObject
         return angle;
     }
 
-    public void ApplyCurrent(Vector3 _currentDirection)
+    public Quaternion RotateTowardsDirection(Vector3 direction)
     {
-        if (_currentDirection == Vector3.zero)
-        {
-            return;
-        }
+        Quaternion currentRotation = myRigidbody.rotation;
+        Vector3 forwardDirection = myRigidbody.transform.right;
 
-        myRigidbody.AddForce(_currentDirection*100);
+        // Calculate the target rotation based on the direction vector
+        Quaternion targetRotation = Quaternion.FromToRotation(forwardDirection, direction) * currentRotation;
+
+        // Smoothly rotate the Rigidbody towards the target rotation
+        Quaternion newRotation = Quaternion.Lerp(currentRotation, targetRotation, forwardRotationSpeedY * Time.deltaTime);
+
+        return newRotation;
+    }
+
+    public Quaternion WeightRotation(Quaternion rotationA, Quaternion rotationB, float weight)
+    {
+        // Ensure the weight is between 0 and 1
+        weight = Mathf.Clamp01(weight);
+
+        // Perform the weighted interpolation between the two rotations
+        Quaternion newRotation = Quaternion.Lerp(rotationA, rotationB, weight);
+
+        // Apply the rotation to the Rigidbody
+        return newRotation;
     }
 }

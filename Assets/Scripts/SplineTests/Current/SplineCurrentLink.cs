@@ -5,17 +5,18 @@ using UnityEngine;
 public class SplineCurrentLink : MonoBehaviour
 {
     public static List<SplineCurrentLink> affectedLinks = new List<SplineCurrentLink>();
+    public static UnderwaterCurrent current;
 
     /// <summary>
     /// Calculates the affected direction based on a start position.
     /// </summary>
     /// <param name="_startPosition">The start position for calculating the affected direction.</param>
     /// <returns>The affected direction vector.</returns>
-    public static Vector3 GetAffectedDirection(Vector3 _startPosition)
+    public static (Vector3 direction, float force) GetAffectedDirection(Vector3 _startPosition)
     {
         if (affectedLinks.Count == 0)
         {
-            return Vector3.zero;
+            return (Vector3.zero, 0);
         }
 
         Vector3 direction = Vector3.zero;
@@ -29,7 +30,8 @@ public class SplineCurrentLink : MonoBehaviour
         }
         direction = direction.normalized * (magnitude / affectedLinks.Count);
 
-        return direction;
+        //return direction * current.currentForce;
+        return (direction, current.currentForce);
     }
 
     internal Vector3 GetCurrentDirection(Vector3 _startPosition) => (transform.forward + Vector3.ProjectOnPlane(transform.position - _startPosition, transform.forward)).normalized;
@@ -37,6 +39,7 @@ public class SplineCurrentLink : MonoBehaviour
     private void Awake()
     {
         affectedLinks = new List<SplineCurrentLink>();
+        current = transform.GetComponentInParent<UnderwaterCurrent>();
     }
     private void OnTriggerEnter(Collider other)
     {
