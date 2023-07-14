@@ -4,29 +4,35 @@ using UnityEngine;
 
 public class SplineCurrentLink : MonoBehaviour
 {
-    //Static
     public static List<SplineCurrentLink> affectedLinks = new List<SplineCurrentLink>();
-    public static Vector3 GetAffectedDirection(Vector3 fromPos)
-    {
-        if (affectedLinks.Count == 0) return Vector3.zero;
 
-        Vector3 dir = Vector3.zero;
-        float magnitude=0;
+    /// <summary>
+    /// Calculates the affected direction based on a start position.
+    /// </summary>
+    /// <param name="_startPosition">The start position for calculating the affected direction.</param>
+    /// <returns>The affected direction vector.</returns>
+    public static Vector3 GetAffectedDirection(Vector3 _startPosition)
+    {
+        if (affectedLinks.Count == 0)
+        {
+            return Vector3.zero;
+        }
+
+        Vector3 direction = Vector3.zero;
+        float magnitude = 0;
 
         for (int i = 0; i < affectedLinks.Count; i++)
         {
-            Vector3 linkDir = affectedLinks[i].GetCurrentDirection(fromPos);
-            dir += linkDir;
-            magnitude+=linkDir.magnitude;
+            Vector3 linkDir = affectedLinks[i].GetCurrentDirection(_startPosition);
+            direction += linkDir;
+            magnitude += linkDir.magnitude;
         }
-        dir = dir.normalized*(magnitude/affectedLinks.Count);
+        direction = direction.normalized * (magnitude / affectedLinks.Count);
 
-        return dir;
+        return direction;
     }
 
-    //Internal
-    public Vector3 GetCurrentDirection(Vector3 fromPos) => (transform.forward + Vector3.ProjectOnPlane(transform.position - fromPos, transform.forward)).normalized;
-
+    internal Vector3 GetCurrentDirection(Vector3 _startPosition) => (transform.forward + Vector3.ProjectOnPlane(transform.position - _startPosition, transform.forward)).normalized;
 
     private void Awake()
     {
@@ -34,12 +40,12 @@ public class SplineCurrentLink : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<SplineCurrentDummy>() && !affectedLinks.Contains(this)) 
+        if (!affectedLinks.Contains(this) && other.GetComponent<Rigidbody>())
             affectedLinks.Add(this);
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponent<SplineCurrentDummy>() && affectedLinks.Contains(this))
+        if (affectedLinks.Contains(this) && other.GetComponent<Rigidbody>())
             affectedLinks.Remove(this);
     }
 }

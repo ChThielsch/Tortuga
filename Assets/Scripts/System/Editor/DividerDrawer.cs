@@ -11,7 +11,7 @@ public class DividerDrawer : DecoratorDrawer
             EditorGUI.LabelField(position, dividerAttribute.header, EditorStyles.boldLabel);
             position.y += EditorGUIUtility.singleLineHeight;
 
-            Rect lineRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 0.5f, position.width, 1f);
+            Rect lineRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 0.5f, position.width, 1.5f);
             EditorGUI.DrawRect(lineRect, Color.gray);
         }
     }

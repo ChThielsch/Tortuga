@@ -14,8 +14,8 @@ public class SplineCurrentDummy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 vec = SplineCurrentLink.GetAffectedDirection(transform.position);
-        rb.velocity = vec*speed;
-        transform.rotation = Quaternion.LookRotation(vec);
+        Vector3 targetRotation = SplineCurrentLink.GetAffectedDirection(transform.position);
+        rb.velocity = targetRotation * speed;
+        transform.rotation = Quaternion.LookRotation(targetRotation);
     }
 }

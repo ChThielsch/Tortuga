@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TurtleController : MonoBehaviour
+public class TurtleController : MonoBehaviour, IFloatingObject
 {
     public enum MovementType { Idle, Forward, Free, TopDown }
 
@@ -10,9 +10,9 @@ public class TurtleController : MonoBehaviour
     public TurtleFin leftFin;
     public TurtleFin rightFin;
     [Header("Force")]
-    [Range(0f, 100f)]
+    [Range(0f, 500f)]
     public float maxForceX = 20;
-    [Range(0f, 100f)]
+    [Range(0f, 500f)]
     public float maxForceZ = 40;
 
     [Divider("Forward")]
@@ -145,6 +145,8 @@ public class TurtleController : MonoBehaviour
             default:
                 break;
         }
+
+        ApplyCurrent(SplineCurrentLink.GetAffectedDirection(transform.position));
     }
 
     private void MoveForward(Vector2 _input)
@@ -253,5 +255,15 @@ public class TurtleController : MonoBehaviour
         }
 
         return angle;
+    }
+
+    public void ApplyCurrent(Vector3 _currentDirection)
+    {
+        if (_currentDirection == Vector3.zero)
+        {
+            return;
+        }
+
+        myRigidbody.AddForce(_currentDirection*100);
     }
 }
