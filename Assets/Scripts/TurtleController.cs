@@ -166,7 +166,7 @@ public class TurtleController : MonoBehaviour
                 break;
             case MovementType.Free:
                 // Calculate the rotation for free movement
-                movementRotation = GretFreeRotation(_input);
+                movementRotation = GetFreeRotation(_input);
                 break;
             case MovementType.TopDown:
                 // Calculate the rotation for top-down movement
@@ -220,7 +220,7 @@ public class TurtleController : MonoBehaviour
         return Quaternion.Euler(newEulerAngles);
     }
 
-    private Quaternion GretFreeRotation(Vector2 _input)
+    private Quaternion GetFreeRotation(Vector2 _input)
     {
         _input *= -1;
 
@@ -308,7 +308,7 @@ public class TurtleController : MonoBehaviour
     public Quaternion RotateTowardsDirection(Vector3 direction)
     {
         Quaternion currentRotation = myRigidbody.rotation;
-        Vector3 forwardDirection = myRigidbody.transform.right;
+        Vector3 forwardDirection = myRigidbody.transform.forward;
 
         // Calculate the target rotation based on the direction vector
         Quaternion targetRotation = Quaternion.FromToRotation(forwardDirection, direction) * currentRotation;

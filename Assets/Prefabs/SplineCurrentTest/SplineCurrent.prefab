@@ -735,8 +735,8 @@ MonoBehaviour:
     - Mode: 0
       Tension: 0.5
       m_DistanceToInterpolation:
-      - Distance: 0
-        T: 0
+      - Distance: -1
+        T: -1
       - Distance: 0.5474888
         T: 0.03448276
       - Distance: 1.1311105
@@ -795,7 +795,7 @@ MonoBehaviour:
         T: 0.9655172
       - Distance: 20.628199
         T: 1
-    m_Closed: 1
+    m_Closed: 0
     m_IntData:
       m_Data: []
     m_FloatData:
