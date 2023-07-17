@@ -33,6 +33,11 @@ public class Player : MonoBehaviour
                 m_turtleController.Swim();
             }
         };
+
+        swimReference.action.canceled += ctx =>
+        {
+            m_swimInput = false;
+        };
     }
 
     private void Update()
@@ -43,13 +48,10 @@ public class Player : MonoBehaviour
         {
             m_turtleController.Swim();
             turtleAnimator.SetTrigger(Constants.AnimatorPush);
-            Debug.Log("Push");
         }
 
-        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y);
-        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.x);
-
-        m_swimInput = false;
+        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y,1f,Time.deltaTime);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.x, 1f, Time.deltaTime);
     }
 
     private void FixedUpdate()
