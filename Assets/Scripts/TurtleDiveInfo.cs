@@ -15,14 +15,23 @@ public class TurtleDiveInfo : MonoBehaviour
 
     public Rigidbody rb;
 
-    private void FixedUpdate()
+    private IEnumerator Start()
+    {
+        while (true)
+        {
+            DisplayInformation();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void DisplayInformation()
     {
         position = new Vector2(rb.position.x, rb.position.z);
         moveDirection = new Vector2(rb.velocity.x, rb.velocity.z);
         depth = rb.position.y;
 
-        Debug.DrawRay(transform.position, moveDirection, Color.green, Time.fixedDeltaTime);
-        Debug.DrawLine(position, transform.position, Color.blue, Time.fixedDeltaTime);
+        //Debug.DrawRay(transform.position, moveDirection, Color.green, Time.fixedDeltaTime);
+        //Debug.DrawLine(position, transform.position, Color.blue, Time.fixedDeltaTime);
 
         depthText.text = $"{depth.ToString("F0")} m";
         pressureText.text = CalculatePressure(depth);
