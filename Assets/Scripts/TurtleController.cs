@@ -26,11 +26,11 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 5f)]
     public float forwardRotationSpeedZ = 1f;
     [Range(0f, 90f)]
+    public float forwardMinAngleX = 25;
+    [Range(0f, 90f)]
     public float forwardMaxAngleX = 45;
     [Range(0f, 90f)]
     public float forwardMaxAngleY = 15;
-    [Range(0f, 90f)]
-    public float forwardMinAngleZ = 25;
     [Range(0f, 90f)]
     public float forwardMaxAngleZ = 45;
 
@@ -42,11 +42,11 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 5f)]
     public float freeRotationSpeedZ = 1f;
     [Range(0f, 90f)]
+    public float freeMinAngleX = 25;
+    [Range(0f, 90f)]
     public float freeMaxAngleX = 45;
     [Range(0f, 90f)]
     public float freeMaxAngleY = 15;
-    [Range(0f, 90f)]
-    public float freeMinAngleZ = 25;
     [Range(0f, 90f)]
     public float freeMaxAngleZ = 45;
 
@@ -54,7 +54,7 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 5f)]
     public float topDownRotationSpeed = 20;
     [Range(0f, 90f)]
-    public float topDownMaxAngleX = 45;
+    public float topDownMaxAngleZ = 45;
 
     private void OnDrawGizmos()
     {
@@ -200,10 +200,11 @@ public class TurtleController : MonoBehaviour
     {
         _input *= -1;
 
+
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = _input.x * forwardMaxAngleX;
+        float targetRotationX = (_input.y > 0) ? _input.y * forwardMaxAngleX : _input.y * forwardMinAngleX;
         float targetRotationY = _input.x * forwardMaxAngleY;
-        float targetRotationZ = (_input.y > 0) ? _input.y * forwardMaxAngleZ : _input.y * forwardMinAngleZ;
+        float targetRotationZ = _input.x * forwardMaxAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -224,8 +225,8 @@ public class TurtleController : MonoBehaviour
         _input *= -1;
 
         // Calculate the target rotation angles based on the input vector
-        float targetRotationX = _input.x * freeMaxAngleX;
-        float targetRotationZ = (_input.y > 0) ? _input.y * freeMaxAngleZ : _input.y * freeMinAngleZ;
+        float targetRotationX = (_input.y > 0) ? _input.y * freeMaxAngleX : _input.y * freeMinAngleX;
+        float targetRotationZ = _input.x * freeMaxAngleZ;
 
         // Calculate the current euler angles
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -244,7 +245,7 @@ public class TurtleController : MonoBehaviour
     private Quaternion GetTopDownRotation(Vector2 _input)
     {
         // Calculate the target angle in the Y-axis based on the input vector
-        float targetAngleY = Mathf.Atan2(_input.x, _input.y) * Mathf.Rad2Deg;
+        float targetAngleY = Mathf.Atan2(_input.y, -_input.x) * Mathf.Rad2Deg;
 
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -253,7 +254,7 @@ public class TurtleController : MonoBehaviour
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
-        float targetAngleX = Mathf.Clamp(-rotationDifference, -topDownMaxAngleX, topDownMaxAngleX);
+        float targetAngleZ = Mathf.Clamp(-rotationDifference, -topDownMaxAngleZ, topDownMaxAngleZ);
 
         // Set the new euler angles with a gradual lerp towards zero rotation in the X-axis
         Vector3 newEulerAngles = new Vector3(
@@ -265,9 +266,9 @@ public class TurtleController : MonoBehaviour
         if (_input != Vector2.zero)
         {
             newEulerAngles = new Vector3(
-                Mathf.LerpAngle(currentEulerAngles.x, targetAngleX, topDownRotationSpeed * Time.deltaTime),
+                0f,
                 Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, topDownRotationSpeed * Time.deltaTime),
-                0f
+                Mathf.LerpAngle(currentEulerAngles.x, targetAngleZ, topDownRotationSpeed * Time.deltaTime)
             );
         }
 

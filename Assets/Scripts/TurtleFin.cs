@@ -53,7 +53,7 @@ public class TurtleFin : MonoBehaviour
             {
                 float currentForceStrength = Mathf.Lerp(initialForceStrength, topDownForceStrength, curveValue);
                 // Apply force in the direction the turtle is facing
-                turtleController.myRigidbody.AddForce(turtleController.transform.right * currentForceStrength, TopDownForceMode);
+                turtleController.myRigidbody.AddForce(turtleController.transform.forward * currentForceStrength, TopDownForceMode);
             }
             else
             {
