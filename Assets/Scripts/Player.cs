@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
     [Space]
     public float topConstrain;
     public float bottomConstrain;
-    public bool holdToSwim;
 
     private TurtleController m_turtleController;
     private Vector2 m_movementInput;
@@ -26,19 +25,13 @@ public class Player : MonoBehaviour
 
     private void InitiateInput()
     {
-        swimReference.action.performed += ctx =>
+        swimReference.action.started += ctx =>
         {
             m_swimInput = true;
             if (transform.position.y < topConstrain)
             {
                 m_turtleController.Swim();
-                turtleAnimator.SetTrigger(Constants.AnimatorPush);
             }
-        };
-
-        swimReference.action.canceled += ctx =>
-        {
-            m_swimInput = false;
         };
     }
 
@@ -46,14 +39,17 @@ public class Player : MonoBehaviour
     {
         m_movementInput = movementReference.action.ReadValue<Vector2>();
 
-        if (transform.position.y <= bottomConstrain || (holdToSwim && m_swimInput && transform.position.y < topConstrain))
+        if (transform.position.y <= bottomConstrain || (m_swimInput && transform.position.y < topConstrain))
         {
             m_turtleController.Swim();
             turtleAnimator.SetTrigger(Constants.AnimatorPush);
+            Debug.Log("Push");
         }
 
         turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y);
         turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.x);
+
+        m_swimInput = false;
     }
 
     private void FixedUpdate()
