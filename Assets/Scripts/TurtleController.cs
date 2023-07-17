@@ -10,9 +10,9 @@ public class TurtleController : MonoBehaviour
     public TurtleFin leftFin;
     public TurtleFin rightFin;
     [Header("Force")]
-    [Range(0f, 500f)]
+    [Range(0f, 1000f)]
     public float maxForceX = 20;
-    [Range(0f, 500f)]
+    [Range(0f, 1000f)]
     public float maxForceZ = 40;
     [Space]
     [Range(0f, 1f)]
