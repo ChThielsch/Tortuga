@@ -301,6 +301,24 @@ public class TurtleController : MonoBehaviour
         return Quaternion.Euler(newEulerAngles);
     }
 
+    private void ApplyRotationForce(float rotationDifference)
+    {
+        // Calculate the force magnitude based on the absolute rotation difference
+        float forceMagnitude = Mathf.Abs(rotationDifference);
+
+        // Get the forward direction of the object
+        Vector3 forwardDirection = myRigidbody.transform.forward;
+
+        // Get the rotation direction as a vector relative to the current rotation
+        Vector3 rotationDirection = Quaternion.Euler(0, rotationDifference, 0) * forwardDirection;
+
+        // Calculate the average direction between forward direction and rotation direction
+        Vector3 averageDirection = (forwardDirection + rotationDirection).normalized;
+
+        // Apply the force to the rigidbody
+        myRigidbody.AddForce(averageDirection * forceMagnitude);
+    }
+
     private Quaternion GetChaseRotation(Vector2 _input)=>RotateTowardsDirection(currentDirection);
     public (Vector3, float) ModifyChaseCurrent(Vector3 _input,(Vector3 direction, float force) splineCurrent)
     {
