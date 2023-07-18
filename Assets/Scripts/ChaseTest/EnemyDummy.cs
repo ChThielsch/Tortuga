@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyDummy : MonoBehaviour
 {
+    public TurtleController prey;
     Rigidbody rb;
     public float
         chasePushForce;
@@ -14,7 +15,7 @@ public class EnemyDummy : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.AddForce(Vector3.forward * chasePushForce, ForceMode.Acceleration);
-
+        if (rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase)
+            rb.AddForce(Vector3.forward * chasePushForce, ForceMode.Acceleration);
     }
 }

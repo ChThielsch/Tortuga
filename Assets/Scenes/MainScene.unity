@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2157.8625, g: 2262.76, b: 3287.434, a: 1}
+  m_IndirectSpecularColor: {r: 2158.301, g: 2260.5022, b: 3278.2935, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -38082,7 +38082,7 @@ MonoBehaviour:
   chaseSlideForce: 20
   chaseNormalZDistance: 5
   chaseMaxZDistance: 10
-  chaseObject: {fileID: 0}
+  chaseObject: {fileID: 2032255288}
 --- !u!136 &798341472
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -96339,6 +96339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee58b6ad59a8fa046bcb411ab3300a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prey: {fileID: 798341471}
   chasePushForce: 25
 --- !u!54 &2032255293
 Rigidbody:
