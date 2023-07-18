@@ -214,11 +214,11 @@ public class TurtleController : MonoBehaviour
             if (chaseObject)
             {
                 float chaseDistance = transform.position.z - chaseObject.position.z;
-                pushScale = Mathf.Lerp(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
+                pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
                                 Debug.Log($"{chaseDistance} to {pushScale}");
             }
             myRigidbody.AddForce(Vector3.forward * chasePushForce*pushScale, ForceMode.Acceleration);
-            myRigidbody.AddForce(Vector3.right * _input.x * chaseSlideForce, ForceMode.Acceleration);
+            myRigidbody.AddForce(Vector3.right * -_input.y * chaseSlideForce, ForceMode.Acceleration);
         }
 
         // Weight the rotation between the current rotation and the movement rotation
