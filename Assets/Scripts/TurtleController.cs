@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TurtleController : MonoBehaviour
 {
-    public enum MovementType { Idle, Forward, Free, TopDown }
+    public enum MovementType { Idle, Forward, Free, TopDown, Chase }
 
     [Header("General")]
     public MovementType movementType;
@@ -56,6 +56,19 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 90f)]
     public float topDownMaxAngleZ = 45;
 
+    [Divider("Top Down")]
+    [Range(0f, 45f)]
+    public float chaseRotationSpeed = 30;
+    [Range(0f, 90f)]
+    public float chaseMaxAngleX = 45;
+    [Range(0f, 45f)]
+    public float chasePushForce = 25;
+    [Range(0f, 45f)]
+    public float chaseSlideForce = 5;
+    public float chaseNormalZDistance = 5;
+    public float chaseMaxZDistance = 10;
+    public Transform chaseObject;
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -83,6 +96,10 @@ public class TurtleController : MonoBehaviour
                 CameraManager.instance.ActiveTopDownCamera();
                 myRigidbody.useGravity = false;
                 break;
+            case MovementType.Chase:
+                CameraManager.instance.ActiveTopDownCamera();
+                myRigidbody.useGravity = false;
+                break;
 
             case MovementType.Forward:
             case MovementType.Free:
@@ -97,13 +114,17 @@ public class TurtleController : MonoBehaviour
     /// Changes the movement type and adjusts camera and gravity settings accordingly.
     /// </summary>
     /// <param name="_movementIndex">The movement type index to set.</param>
-    public void ChangeMovementType(int _movementIndex)
+    public void ChangeMovementType(int _movementIndex) //Cant we just call the other Overload of this function from here so its not doubled?
     {
         movementType = (MovementType)_movementIndex;
 
         switch (_movementIndex)
         {
             case (int)MovementType.TopDown:
+                CameraManager.instance.ActiveTopDownCamera();
+                myRigidbody.useGravity = false;
+                break;
+            case (int)MovementType.Chase:
                 CameraManager.instance.ActiveTopDownCamera();
                 myRigidbody.useGravity = false;
                 break;
@@ -151,7 +172,7 @@ public class TurtleController : MonoBehaviour
         else
         {
             // Enable gravity if there is no current direction
-            if (movementType != MovementType.TopDown && movementType != MovementType.Idle)
+            if (movementType != MovementType.TopDown && movementType != MovementType.Chase && movementType != MovementType.Idle)
             {
                 myRigidbody.useGravity = true;
             }
@@ -172,6 +193,10 @@ public class TurtleController : MonoBehaviour
                 // Calculate the rotation for top-down movement
                 movementRotation = GetTopDownRotation(_input);
                 break;
+            case MovementType.Chase:
+                // Calculate the rotation for top-down chase movement
+                movementRotation = GetChaseRotation(_input);
+                break;
             default:
                 break;
         }
@@ -180,6 +205,21 @@ public class TurtleController : MonoBehaviour
         Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
         // Apply the force to the Rigidbody
         myRigidbody.AddForce(totalForce);
+
+        // Set Min force if in chase
+        if (movementType == MovementType.Chase)
+        {
+            float pushScale = 1;
+
+            if (chaseObject)
+            {
+                float chaseDistance = transform.position.z - chaseObject.position.z;
+                pushScale = Mathf.Lerp(1f,0.33f,(chaseDistance-chaseNormalZDistance)/chaseMaxZDistance);
+            }
+
+            myRigidbody.AddForce(Vector3.forward * chasePushForce*pushScale, ForceMode.Acceleration);
+            myRigidbody.AddForce(Vector3.right * _input.x * chaseSlideForce, ForceMode.Acceleration);
+        }
 
         // Weight the rotation between the current rotation and the movement rotation
         Quaternion finalRotation = Quaternion.identity;
@@ -269,6 +309,40 @@ public class TurtleController : MonoBehaviour
                 0f,
                 Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, topDownRotationSpeed * Time.deltaTime),
                 Mathf.LerpAngle(currentEulerAngles.x, targetAngleZ, topDownRotationSpeed * Time.deltaTime)
+            );
+        }
+
+        // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
+        return Quaternion.Euler(newEulerAngles);
+    }
+
+    private Quaternion GetChaseRotation(Vector2 _input)
+    {
+        // Calculate the target angle in the Y-axis based on the input vector
+        float targetAngleY = (_input.x > 0) ? _input.x * chaseMaxAngleX : _input.x * chaseMaxAngleX;
+
+        // Get the current euler angles of the rigidbody's rotation
+        Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
+
+        // Determine the direction of rotation by calculating the difference between current and target angles
+        float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
+
+        // Clamp the rotation difference to the maximum allowed angle in the X-axis
+        float targetAngleZ = Mathf.Clamp(-rotationDifference, -topDownMaxAngleZ, topDownMaxAngleZ);
+
+        // Set the new euler angles with a gradual lerp towards zero rotation in the X-axis
+        Vector3 newEulerAngles = new Vector3(
+            Mathf.LerpAngle(currentEulerAngles.x, 0, chaseRotationSpeed * Time.deltaTime),
+            myRigidbody.rotation.eulerAngles.y,
+            currentEulerAngles.z);
+
+        // If there is input (movement), update the new euler angles with interpolation towards the target angles
+        if (_input != Vector2.zero)
+        {
+            newEulerAngles = new Vector3(
+                0f,
+                Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, chaseRotationSpeed * Time.deltaTime),
+                Mathf.LerpAngle(currentEulerAngles.x, targetAngleZ, chaseRotationSpeed * Time.deltaTime)
             );
         }
 

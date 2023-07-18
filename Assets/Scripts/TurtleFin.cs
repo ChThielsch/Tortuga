@@ -49,7 +49,7 @@ public class TurtleFin : MonoBehaviour
             float curveValue = paddleCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
 
 
-            if (turtleController.movementType == TurtleController.MovementType.TopDown)
+            if (turtleController.movementType == TurtleController.MovementType.TopDown||turtleController.movementType==TurtleController.MovementType.Chase)
             {
                 float currentForceStrength = Mathf.Lerp(initialForceStrength, topDownForceStrength, curveValue);
                 // Apply force in the direction the turtle is facing
