@@ -12,6 +12,7 @@ public class TurtleDiveInfo : MonoBehaviour
     public TMP_Text depthText;
     public TMP_Text pressureText;
     public TMP_Text speedText;
+    public TMP_Text weightText;
 
     public Rigidbody rb;
 
@@ -36,6 +37,7 @@ public class TurtleDiveInfo : MonoBehaviour
         depthText.text = $"{depth.ToString("F0")} m";
         pressureText.text = CalculatePressure(depth);
         speedText.text = CalculateKmPerHour(rb.velocity);
+        weightText.text = $"{rb.mass} kg";
     }
 
     public string CalculatePressure(float depth)
