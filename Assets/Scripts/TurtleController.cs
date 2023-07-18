@@ -68,6 +68,7 @@ public class TurtleController : MonoBehaviour
     public float chaseNormalZDistance = 5;
     public float chaseMaxZDistance = 10;
     public Transform chaseObject;
+    [HideInInspector] public float chaseWaitTime;
 
     private void OnDrawGizmos()
     {
@@ -97,8 +98,9 @@ public class TurtleController : MonoBehaviour
                 myRigidbody.useGravity = false;
                 break;
             case MovementType.Chase:
-                CameraManager.instance.ActiveTopDownCamera();
+                CameraManager.instance.ActiveChaseCamera();
                 myRigidbody.useGravity = false;
+                chaseWaitTime = 3;
                 break;
 
             case MovementType.Forward:
@@ -125,8 +127,9 @@ public class TurtleController : MonoBehaviour
                 myRigidbody.useGravity = false;
                 break;
             case (int)MovementType.Chase:
-                CameraManager.instance.ActiveTopDownCamera();
+                CameraManager.instance.ActiveChaseCamera();
                 myRigidbody.useGravity = false;
+                chaseWaitTime = 3;
                 break;
 
             case (int)MovementType.Forward:
@@ -209,16 +212,21 @@ public class TurtleController : MonoBehaviour
         // Set Min force if in chase
         if (movementType == MovementType.Chase)
         {
-            float pushScale = 1;
-
-            if (chaseObject)
+            if (chaseWaitTime <= 0)
             {
-                float chaseDistance = transform.position.z - chaseObject.position.z;
-                pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
-                                Debug.Log($"{chaseDistance} to {pushScale}");
+                float pushScale = 1;
+
+                if (chaseObject)
+                {
+                    float chaseDistance = transform.position.z - chaseObject.position.z;
+                    pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
+                    Debug.Log($"{chaseDistance} to {pushScale}");
+                }
+                myRigidbody.AddForce(Vector3.forward * chasePushForce * pushScale, ForceMode.Acceleration);
+                myRigidbody.AddForce(Vector3.right * -_input.y * chaseSlideForce, ForceMode.Acceleration);
             }
-            myRigidbody.AddForce(Vector3.forward * chasePushForce*pushScale, ForceMode.Acceleration);
-            myRigidbody.AddForce(Vector3.right * -_input.y * chaseSlideForce, ForceMode.Acceleration);
+            else chaseWaitTime -= Time.fixedDeltaTime;
+
         }
 
         // Weight the rotation between the current rotation and the movement rotation
@@ -318,8 +326,10 @@ public class TurtleController : MonoBehaviour
 
     private Quaternion GetChaseRotation(Vector2 _input)
     {
+        _input.y = -_input.y;
+
         // Calculate the target angle in the Y-axis based on the input vector
-        float targetAngleY = (_input.x > 0) ? _input.x * chaseMaxAngleX : _input.x * chaseMaxAngleX;
+        float targetAngleY = (_input.y > 0) ? _input.y * chaseMaxAngleX : _input.y * chaseMaxAngleX;
 
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;

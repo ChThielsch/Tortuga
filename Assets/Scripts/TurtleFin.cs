@@ -9,6 +9,8 @@ public class TurtleFin : MonoBehaviour
     public ForceMode FreeForceMode;
     public float topDownForceStrength;
     public ForceMode TopDownForceMode;
+    public float chaseForceStrength;
+    public ForceMode ChaseForceMode;
     public float swimDuration = 1.25f;
     public AnimationCurve paddleCurve;
     public TurtleController turtleController;
@@ -48,8 +50,13 @@ public class TurtleFin : MonoBehaviour
             float normalizedTime = elapsedTime / swimDuration;
             float curveValue = paddleCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
 
-
-            if (turtleController.movementType == TurtleController.MovementType.TopDown||turtleController.movementType==TurtleController.MovementType.Chase)
+            if (turtleController.movementType==TurtleController.MovementType.Chase)
+            {
+                float currentForceStrength = Mathf.Lerp(initialForceStrength, chaseForceStrength, curveValue);
+                // Apply force in the direction the turtle is facing
+                turtleController.myRigidbody.AddForce(turtleController.transform.forward * currentForceStrength, ChaseForceMode);
+            }
+            else if (turtleController.movementType == TurtleController.MovementType.TopDown)
             {
                 float currentForceStrength = Mathf.Lerp(initialForceStrength, topDownForceStrength, curveValue);
                 // Apply force in the direction the turtle is facing

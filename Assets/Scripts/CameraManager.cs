@@ -9,6 +9,7 @@ public class CameraManager : MonoBehaviour
 
     public CinemachineVirtualCameraBase thirdPersonCamera;
     public CinemachineVirtualCameraBase topDownCamera;
+    public CinemachineVirtualCameraBase chaseCamera;
 
     private void OnEnable()
     {
@@ -22,13 +23,21 @@ public class CameraManager : MonoBehaviour
 
     public void ActiveThirdPersonCamera()
     {
-        topDownCamera.gameObject.SetActive(false);
         thirdPersonCamera.gameObject.SetActive(true);
+        topDownCamera.gameObject.SetActive(false);
+        chaseCamera.gameObject.SetActive(false);
     }
 
     public void ActiveTopDownCamera()
     {
         thirdPersonCamera.gameObject.SetActive(false);
         topDownCamera.gameObject.SetActive(true);
+        chaseCamera.gameObject.SetActive(false);
+    }
+    public void ActiveChaseCamera()
+    {
+        thirdPersonCamera.gameObject.SetActive(false);
+        topDownCamera.gameObject.SetActive(false);
+        chaseCamera.gameObject.SetActive(true);
     }
 }

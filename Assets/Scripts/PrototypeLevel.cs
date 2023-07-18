@@ -10,6 +10,8 @@ public class PrototypeLevel : MonoBehaviour
     [ContextMenu("JumpToLevel")]
     public void JumpToLevel()
     {        
-        playerRigidbody.MovePosition(spawnPoint.position);
+        playerRigidbody.velocity = Vector3.zero;
+        playerRigidbody.angularVelocity = Vector3.zero;
+        playerRigidbody.position = spawnPoint.position;
     }
 }
