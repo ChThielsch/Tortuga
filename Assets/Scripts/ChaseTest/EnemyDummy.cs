@@ -18,7 +18,8 @@ public class EnemyDummy : MonoBehaviour
         if (valid)
         {
             rb.AddForce(Vector3.forward * prey.chasePushForce, ForceMode.Acceleration);
-            rb.AddForce(Vector3.right*(prey.transform.position.x-transform.position.x),ForceMode.Acceleration);
+            rb.AddForce((Vector3.right*(prey.transform.position.x-transform.position.x)).normalized*prey.chaseSlideForce,ForceMode.Acceleration);
+            transform.LookAt(prey.transform.position);
         }
         else
         {
