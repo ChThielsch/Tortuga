@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        m_movementInput = movementReference.action.ReadValue<Vector2>();
+        m_movementInput = -movementReference.action.ReadValue<Vector2>();
 
         if (transform.position.y <= bottomConstrain || (m_swimInput && transform.position.y < topConstrain))
         {
@@ -50,8 +50,8 @@ public class Player : MonoBehaviour
             turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
 
-        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, -m_movementInput.y,1f,Time.deltaTime);
-        turtleAnimator.SetFloat(Constants.AnimatorRotationX, -m_movementInput.x, 1f, Time.deltaTime);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y,1f,Time.deltaTime);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationX, m_movementInput.x, 1f, Time.deltaTime);
     }
 
     private void FixedUpdate()

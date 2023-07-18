@@ -71,6 +71,8 @@ public class TurtleController : MonoBehaviour
     internal float currentChaseWaitTime;
     internal Vector3 currentDirection;
 
+    private float m_turnForce;
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -143,7 +145,7 @@ public class TurtleController : MonoBehaviour
         if (movementType == MovementType.Chase)
         {
             if (chaseWaitTime < 0)
-                splineCurrent = ModifyChaseCurrent(_input,splineCurrent);
+                splineCurrent = ModifyChaseCurrent(_input, splineCurrent);
             else chaseWaitTime -= Time.fixedDeltaTime;
         }
 
@@ -153,8 +155,12 @@ public class TurtleController : MonoBehaviour
         Quaternion currentRotation = Quaternion.identity;
         bool inCurrent = currentDirection != Vector3.zero;
 
-        Vector3
-            totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
+        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
+
+        if (myRigidbody.velocity.magnitude < 10)
+        {
+            totalForce += GetRotationForce(m_turnForce);
+        }
 
         if (inCurrent)
         {
@@ -191,7 +197,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Chase:
                 // Calculate the rotation for top-down chase movement
                 movementRotation = currentRotation; /*GetChaseRotation(_input);*/
-                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce*100;
+                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce * 100;
                 break;
             default:
                 break;
@@ -217,8 +223,6 @@ public class TurtleController : MonoBehaviour
 
     private Quaternion GetForwardRotation(Vector2 _input)
     {
-        _input *= -1;
-
         // Calculate the target rotation angles based on the input vector
         float targetRotationX = (_input.y > 0) ? _input.y * forwardMaxAngleX : _input.y * forwardMinAngleX;
         float targetRotationY = _input.x * forwardMaxAngleY;
@@ -240,8 +244,6 @@ public class TurtleController : MonoBehaviour
 
     private Quaternion GetFreeRotation(Vector2 _input)
     {
-        _input *= -1;
-
         // Calculate the target rotation angles based on the input vector
         float targetRotationX = (_input.y > 0) ? _input.y * freeMaxAngleX : _input.y * freeMinAngleX;
         float targetRotationZ = _input.x * freeMaxAngleZ;
@@ -256,12 +258,16 @@ public class TurtleController : MonoBehaviour
             Mathf.LerpAngle(currentEulerAngles.z, targetRotationZ, freeRotationSpeedZ * Time.fixedDeltaTime)
         );
 
+        m_turnForce = Mathf.DeltaAngle(currentEulerAngles.y, newEulerAngles.y);
+
         // Return the rotation
         return Quaternion.Euler(newEulerAngles);
     }
 
     private Quaternion GetTopDownRotation(Vector2 _input)
     {
+        _input *= -1;
+
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
 
@@ -295,13 +301,14 @@ public class TurtleController : MonoBehaviour
             );
         }
 
-        ApplyRotationForce(rotationDifference);
+        m_turnForce = rotationDifference;
 
         // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
         return Quaternion.Euler(newEulerAngles);
     }
 
-    private void ApplyRotationForce(float rotationDifference)
+
+    private Vector3 GetRotationForce(float rotationDifference)
     {
         // Calculate the force magnitude based on the absolute rotation difference
         float forceMagnitude = Mathf.Abs(rotationDifference);
@@ -316,16 +323,16 @@ public class TurtleController : MonoBehaviour
         Vector3 averageDirection = (forwardDirection + rotationDirection).normalized;
 
         // Apply the force to the rigidbody
-        myRigidbody.AddForce(averageDirection * forceMagnitude);
+        return averageDirection * forceMagnitude;
     }
 
-    private Quaternion GetChaseRotation(Vector2 _input)=>RotateTowardsDirection(currentDirection);
-    public (Vector3, float) ModifyChaseCurrent(Vector3 _input,(Vector3 direction, float force) splineCurrent)
+    private Quaternion GetChaseRotation(Vector2 _input) => RotateTowardsDirection(currentDirection);
+    public (Vector3, float) ModifyChaseCurrent(Vector3 _input, (Vector3 direction, float force) splineCurrent)
     {
         if (splineCurrent.direction == Vector3.zero)
         {
             splineCurrent.direction = Vector3.forward;
-            splineCurrent.force = chaseDefaultForce*100f;
+            splineCurrent.force = chaseDefaultForce * 100f;
         }
 
         float chaseDistance = transform.position.z - chaseObject.position.z;
@@ -335,7 +342,7 @@ public class TurtleController : MonoBehaviour
 
         return splineCurrent;
     }
-    public Vector3 ChaseMovement(Vector3 _input,Vector3 currentDirection)
+    public Vector3 ChaseMovement(Vector3 _input, Vector3 currentDirection)
     {
         return Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce;
     }
