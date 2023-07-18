@@ -38060,7 +38060,7 @@ MonoBehaviour:
   freeMaxAngleZ: 45
   topDownRotationSpeed: 5
   topDownMaxAngleZ: 45
-  chaseRotationSpeed: 30
+  chaseRotationSpeed: 10
   chaseMaxAngleX: 45
   chasePushForce: 25
   chaseSlideForce: 20
@@ -96477,7 +96477,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: {fileID: 969176874}
   prey: {fileID: 798341471}
-  chasePushForce: 25
 --- !u!54 &2032255293
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -96503,7 +96502,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 116
   m_CollisionDetection: 2
 --- !u!1 &2034233471
 GameObject:

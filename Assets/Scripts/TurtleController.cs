@@ -326,10 +326,11 @@ public class TurtleController : MonoBehaviour
 
     private Quaternion GetChaseRotation(Vector2 _input)
     {
+        //Flip y because camera is flipped
         _input.y = -_input.y;
 
         // Calculate the target angle in the Y-axis based on the input vector
-        float targetAngleY = (_input.y > 0) ? _input.y * chaseMaxAngleX : _input.y * chaseMaxAngleX;
+        float targetAngleY = (_input.y == 0) ? 0 : _input.y * chaseMaxAngleX;
 
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
@@ -338,22 +339,24 @@ public class TurtleController : MonoBehaviour
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
-        float targetAngleZ = Mathf.Clamp(-rotationDifference, -topDownMaxAngleZ, topDownMaxAngleZ);
+        float targetAngleZ=0;
 
-        // Set the new euler angles with a gradual lerp towards zero rotation in the X-axis
-        Vector3 newEulerAngles = new Vector3(
-            Mathf.LerpAngle(currentEulerAngles.x, 0, chaseRotationSpeed * Time.deltaTime),
-            myRigidbody.rotation.eulerAngles.y,
-            currentEulerAngles.z);
-
+        Vector3 newEulerAngles;
         // If there is input (movement), update the new euler angles with interpolation towards the target angles
-        if (_input != Vector2.zero)
+        if (_input.y != 0)
         {
             newEulerAngles = new Vector3(
                 0f,
                 Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, chaseRotationSpeed * Time.deltaTime),
                 Mathf.LerpAngle(currentEulerAngles.x, targetAngleZ, chaseRotationSpeed * Time.deltaTime)
             );
+        }
+        else
+        {
+            newEulerAngles = new Vector3(
+                0f,
+                Mathf.LerpAngle(currentEulerAngles.y, 0, chaseRotationSpeed * Time.deltaTime),
+                currentEulerAngles.z);
         }
 
         // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles

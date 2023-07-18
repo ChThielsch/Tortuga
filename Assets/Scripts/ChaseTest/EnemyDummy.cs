@@ -7,8 +7,6 @@ public class EnemyDummy : MonoBehaviour
     public PrototypeLevel level;
     public TurtleController prey;
     Rigidbody rb;
-    public float
-        chasePushForce;
 
     private void Awake()
     {
@@ -18,7 +16,10 @@ public class EnemyDummy : MonoBehaviour
     {
         bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase&& prey.chaseWaitTime<=0;
         if (valid)
-            rb.AddForce(Vector3.forward * chasePushForce, ForceMode.Acceleration);
+        {
+            rb.AddForce(Vector3.forward * prey.chasePushForce, ForceMode.Acceleration);
+            rb.AddForce(Vector3.right*(prey.transform.position.x-transform.position.x),ForceMode.Acceleration);
+        }
         else
         {
             rb.position = level.spawnPoint.position + Vector3.back * prey.chaseNormalZDistance;
