@@ -19,6 +19,8 @@ public class TurtleController : MonoBehaviour
     public float rotationWeight = 0.5f;
 
     [Divider("Forward")]
+    [Range(0f, 1000f)]
+    public float forwardGlobalForce = 200;
     [Range(0f, 5f)]
     public float forwardRotationSpeedX = 1f;
     [Range(0f, 5f)]
@@ -168,6 +170,8 @@ public class TurtleController : MonoBehaviour
         Quaternion currentRotation = Quaternion.identity;
         bool inCurrent = currentDirection != Vector3.zero;
 
+        Vector3 globalForce = Vector3.zero;
+
         if (inCurrent)
         {
             // Disable gravity if there is a current direction
@@ -190,6 +194,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Forward:
                 // Calculate the rotation for forward movement
                 movementRotation = GetForwardRotation(_input);
+                globalForce = Vector3.forward * forwardGlobalForce;
                 break;
             case MovementType.Free:
                 // Calculate the rotation for free movement
@@ -208,7 +213,7 @@ public class TurtleController : MonoBehaviour
         }
 
         // Calculate the total force to be applied, which includes the current force and force based on rotation
-        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
+        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation() + globalForce;
         // Apply the force to the Rigidbody
         myRigidbody.AddForce(totalForce);
 
