@@ -58,7 +58,7 @@ public class TurtleController : MonoBehaviour
     [Range(0f, 90f)]
     public float topDownMaxAngleZ = 45;
 
-    [Divider("Top Down")]
+    [Divider("Chase")]
     [Range(0f, 45f)]
     public float chaseRotationSpeed = 30;
     [Range(0f, 90f)]
@@ -70,9 +70,11 @@ public class TurtleController : MonoBehaviour
     public float chaseNormalZDistance = 5;
     public float chaseMaxZDistance = 10;
     public Transform chaseObject;
-    [HideInInspector] public float chaseWaitTime;
 
-    [HideInInspector] public Vector3 currentDirection;
+    public float chaseWaitTime;
+
+    internal float currentChaseWaitTime;
+    internal Vector3 currentDirection;
 
     private void OnDrawGizmos()
     {
@@ -105,7 +107,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Chase:
                 CameraManager.instance.ActiveChaseCamera();
                 myRigidbody.useGravity = false;
-                chaseWaitTime = 3;
+                currentChaseWaitTime = chaseWaitTime;
                 myRigidbody.constraints = myRigidbody.constraints | RigidbodyConstraints.FreezePositionY;
                 break;
 
@@ -123,32 +125,9 @@ public class TurtleController : MonoBehaviour
     /// Changes the movement type and adjusts camera and gravity settings accordingly.
     /// </summary>
     /// <param name="_movementIndex">The movement type index to set.</param>
-    public void ChangeMovementType(int _movementIndex) //Cant we just call the other Overload of this function from here so its not doubled?
+    public void ChangeMovementType(int _movementIndex)
     {
-        movementType = (MovementType)_movementIndex;
-
-        switch (_movementIndex)
-        {
-            case (int)MovementType.TopDown:
-                CameraManager.instance.ActiveTopDownCamera();
-                myRigidbody.useGravity = false;
-                break;
-            case (int)MovementType.Chase:
-                CameraManager.instance.ActiveChaseCamera();
-                myRigidbody.useGravity = false;
-                chaseWaitTime = 3;
-                break;
-
-            case (int)MovementType.Forward:
-            case (int)MovementType.Free:
-                CameraManager.instance.ActiveThirdPersonCamera();
-                myRigidbody.useGravity = true;
-                break;
-            default:
-                CameraManager.instance.ActiveThirdPersonCamera();
-                myRigidbody.useGravity = false;
-                break;
-        }
+        ChangeMovementType((MovementType)_movementIndex);
     }
 
     public void Swim()
@@ -215,19 +194,18 @@ public class TurtleController : MonoBehaviour
         }
 
         // Calculate the total force to be applied, which includes the current force and force based on rotation
-        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation(m_rotationForwardForce) + globalForce;
+        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation() + globalForce;
         // Apply the force to the Rigidbody
-
         myRigidbody.AddForce(totalForce);
 
         if (movementType == MovementType.Chase)
         {
-            if (chaseWaitTime <= 0)
+            if (currentChaseWaitTime <= 0)
             {
                 Vector3 chaseForce = GetChaseMovement(_input);
                 myRigidbody.AddForce(chaseForce, ForceMode.Acceleration);
             }
-            else chaseWaitTime -= Time.fixedDeltaTime;
+            else currentChaseWaitTime -= Time.fixedDeltaTime;
         }
 
         // Weight the rotation between the current rotation and the movement rotation
@@ -248,7 +226,6 @@ public class TurtleController : MonoBehaviour
     private Quaternion GetForwardRotation(Vector2 _input)
     {
         _input *= -1;
-
 
         // Calculate the target rotation angles based on the input vector
         float targetRotationX = (_input.y > 0) ? _input.y * forwardMaxAngleX : _input.y * forwardMinAngleX;
@@ -293,17 +270,19 @@ public class TurtleController : MonoBehaviour
 
     private Quaternion GetTopDownRotation(Vector2 _input)
     {
-        // Calculate the target angle in the Y-axis based on the input vector
-        float targetAngleY = Mathf.Atan2(_input.y, -_input.x) * Mathf.Rad2Deg;
-
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
 
+        float targetAngleY = currentEulerAngles.y;
+
+        if (_input != Vector2.zero)
+        {
+            // Calculate the target angle in the Y-axis based on the input vector
+            targetAngleY = Mathf.Atan2(_input.y, -_input.x) * Mathf.Rad2Deg;
+        }
+
         // Determine the direction of rotation by calculating the difference between current and target angles
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
-
-        // Cache the difference as a forward force so turtle doesnt rotate on point
-        m_rotationForwardForce = Mathf.Abs(rotationDifference);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
         float targetAngleZ = Mathf.Clamp(-rotationDifference, -topDownMaxAngleZ, topDownMaxAngleZ);
@@ -324,8 +303,28 @@ public class TurtleController : MonoBehaviour
             );
         }
 
+        ApplyRotationForce(rotationDifference);
+
         // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
         return Quaternion.Euler(newEulerAngles);
+    }
+
+    private void ApplyRotationForce(float rotationDifference)
+    {
+        // Calculate the force magnitude based on the absolute rotation difference
+        float forceMagnitude = Mathf.Abs(rotationDifference);
+
+        // Get the forward direction of the object
+        Vector3 forwardDirection = myRigidbody.transform.forward;
+
+        // Get the rotation direction as a vector relative to the current rotation
+        Vector3 rotationDirection = Quaternion.Euler(0, rotationDifference, 0) * forwardDirection;
+
+        // Calculate the average direction between forward direction and rotation direction
+        Vector3 averageDirection = (forwardDirection + rotationDirection).normalized;
+
+        // Apply the force to the rigidbody
+        myRigidbody.AddForce(averageDirection * forceMagnitude);
     }
 
     private Quaternion GetChaseRotation(Vector2 _input)
@@ -338,9 +337,6 @@ public class TurtleController : MonoBehaviour
 
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
-
-        // Determine the direction of rotation by calculating the difference between current and target angles
-        float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
         float targetAngleZ = 0;
@@ -378,7 +374,7 @@ public class TurtleController : MonoBehaviour
             Debug.Log($"{chaseDistance} to {pushScale}");
         }
         Vector3 force =
-            Vector3.forward * chasePushForce * pushScale + 
+            Vector3.forward * chasePushForce * pushScale +
             Vector3.right * _input.y * chaseSlideForce;
 
         return force;
@@ -397,15 +393,8 @@ public class TurtleController : MonoBehaviour
         Vector3 localFloatingForce = localForward * angleX * maxForceZ * Time.fixedDeltaTime +
                                      localRight * angleZ * -maxForceX * Time.fixedDeltaTime;
 
-        // Set the y component of the force to 0
-        localFloatingForce.y = 0f;
-
-        //localForward.Normalize();
-
-        Vector3 forwardForce = localForward * _forwardForceValue;
 
-
-        return localFloatingForce + forwardForce;
+        return localFloatingForce;
     }
 
     public static float ConvertAngleToRange(float angle)

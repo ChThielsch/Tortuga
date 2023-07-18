@@ -14,7 +14,7 @@ public class EnemyDummy : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase&& prey.chaseWaitTime<=0;
+        bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase&& prey.currentChaseWaitTime <= 0;
         if (valid)
         {
             Vector3
