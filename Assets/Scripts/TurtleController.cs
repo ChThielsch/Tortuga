@@ -59,12 +59,7 @@ public class TurtleController : MonoBehaviour
     public float topDownMaxAngleZ = 45;
 
     [Divider("Chase")]
-    [Range(0f, 45f)]
-    public float chaseRotationSpeed = 30;
-    [Range(0f, 90f)]
-    public float chaseMaxAngleX = 45;
-    [Range(0f, 45f)]
-    public float chasePushForce = 25;
+    public float chaseDefaultForce = 10;
     [Range(0f, 45f)]
     public float chaseSlideForce = 5;
     public float chaseNormalZDistance = 5;
@@ -145,13 +140,21 @@ public class TurtleController : MonoBehaviour
         // Get the current direction and force from the spline at the turtle's position
         (Vector3 direction, float force) splineCurrent = SplineCurrentLink.GetAffectedDirection(transform.position);
 
+        if (movementType == MovementType.Chase)
+        {
+            if (chaseWaitTime < 0)
+                splineCurrent = ModifyChaseCurrent(_input,splineCurrent);
+            else chaseWaitTime -= Time.fixedDeltaTime;
+        }
+
         currentDirection = splineCurrent.direction;
         float currentForce = splineCurrent.force;
 
         Quaternion currentRotation = Quaternion.identity;
         bool inCurrent = currentDirection != Vector3.zero;
 
-        Vector3 globalForce = Vector3.zero;
+        Vector3
+            totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation();
 
         if (inCurrent)
         {
@@ -175,7 +178,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Forward:
                 // Calculate the rotation for forward movement
                 movementRotation = GetForwardRotation(_input);
-                globalForce = Vector3.forward * forwardGlobalForce;
+                totalForce += Vector3.forward * forwardGlobalForce;
                 break;
             case MovementType.Free:
                 // Calculate the rotation for free movement
@@ -187,26 +190,15 @@ public class TurtleController : MonoBehaviour
                 break;
             case MovementType.Chase:
                 // Calculate the rotation for top-down chase movement
-                movementRotation = GetChaseRotation(_input);
+                movementRotation = currentRotation; /*GetChaseRotation(_input);*/
+                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce*100;
                 break;
             default:
                 break;
         }
 
-        // Calculate the total force to be applied, which includes the current force and force based on rotation
-        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation() + globalForce;
         // Apply the force to the Rigidbody
         myRigidbody.AddForce(totalForce);
-
-        if (movementType == MovementType.Chase)
-        {
-            if (currentChaseWaitTime <= 0)
-            {
-                Vector3 chaseForce = GetChaseMovement(_input);
-                myRigidbody.AddForce(chaseForce, ForceMode.Acceleration);
-            }
-            else currentChaseWaitTime -= Time.fixedDeltaTime;
-        }
 
         // Weight the rotation between the current rotation and the movement rotation
         Quaternion finalRotation = Quaternion.identity;
@@ -309,75 +301,25 @@ public class TurtleController : MonoBehaviour
         return Quaternion.Euler(newEulerAngles);
     }
 
-    private void ApplyRotationForce(float rotationDifference)
+    private Quaternion GetChaseRotation(Vector2 _input)=>RotateTowardsDirection(currentDirection);
+    public (Vector3, float) ModifyChaseCurrent(Vector3 _input,(Vector3 direction, float force) splineCurrent)
     {
-        // Calculate the force magnitude based on the absolute rotation difference
-        float forceMagnitude = Mathf.Abs(rotationDifference);
+        if (splineCurrent.direction == Vector3.zero)
+        {
+            splineCurrent.direction = Vector3.forward;
+            splineCurrent.force = chaseDefaultForce*100f;
+        }
 
-        // Get the forward direction of the object
-        Vector3 forwardDirection = myRigidbody.transform.forward;
+        float chaseDistance = transform.position.z - chaseObject.position.z;
+        float pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
 
-        // Get the rotation direction as a vector relative to the current rotation
-        Vector3 rotationDirection = Quaternion.Euler(0, rotationDifference, 0) * forwardDirection;
+        splineCurrent.force *= pushScale;
 
-        // Calculate the average direction between forward direction and rotation direction
-        Vector3 averageDirection = (forwardDirection + rotationDirection).normalized;
-
-        // Apply the force to the rigidbody
-        myRigidbody.AddForce(averageDirection * forceMagnitude);
+        return splineCurrent;
     }
-
-    private Quaternion GetChaseRotation(Vector2 _input)
+    public Vector3 ChaseMovement(Vector3 _input,Vector3 currentDirection)
     {
-        //Flip y because camera is flipped
-        _input.y = -_input.y;
-
-        // Calculate the target angle in the Y-axis based on the input vector
-        float targetAngleY = (_input.y == 0) ? 0 : _input.y * chaseMaxAngleX;
-
-        // Get the current euler angles of the rigidbody's rotation
-        Vector3 currentEulerAngles = myRigidbody.rotation.eulerAngles;
-
-        // Clamp the rotation difference to the maximum allowed angle in the X-axis
-        float targetAngleZ = 0;
-
-        Vector3 newEulerAngles;
-        // If there is input (movement), update the new euler angles with interpolation towards the target angles
-        if (_input.y != 0)
-        {
-            newEulerAngles = new Vector3(
-                0f,
-                Mathf.LerpAngle(currentEulerAngles.y, targetAngleY, chaseRotationSpeed * Time.deltaTime),
-                Mathf.LerpAngle(currentEulerAngles.x, targetAngleZ, chaseRotationSpeed * Time.deltaTime)
-            );
-        }
-        else
-        {
-            newEulerAngles = new Vector3(
-                0f,
-                Mathf.LerpAngle(currentEulerAngles.y, 0, chaseRotationSpeed * Time.deltaTime),
-                currentEulerAngles.z);
-        }
-
-        // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
-        return Quaternion.Euler(newEulerAngles);
-    }
-    public Vector3 GetChaseMovement(Vector2 _input)
-    {
-        _input.y = -_input.y;
-
-        float pushScale = 1;
-        if (chaseObject)
-        {
-            float chaseDistance = transform.position.z - chaseObject.position.z;
-            pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
-            Debug.Log($"{chaseDistance} to {pushScale}");
-        }
-        Vector3 force =
-            Vector3.forward * chasePushForce * pushScale +
-            Vector3.right * _input.y * chaseSlideForce;
-
-        return force;
+        return Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce;
     }
 
     private Vector3 GetForceBasedOnRotation()

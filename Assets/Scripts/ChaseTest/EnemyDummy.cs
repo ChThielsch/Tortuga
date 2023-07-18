@@ -18,11 +18,14 @@ public class EnemyDummy : MonoBehaviour
         if (valid)
         {
             Vector3
-               chaseDirection = prey.currentDirection!=Vector3.zero ? prey.currentDirection : Vector3.forward,
-               chaseRight = Vector3.Cross(Vector3.up, chaseDirection);
+               chaseDirection = prey.currentDirection != Vector3.zero ? prey.currentDirection : Vector3.forward,
+               chaseRight = Vector3.Cross(Vector3.up, chaseDirection),
+               distance = prey.transform.position - transform.position;
 
-            Vector3 force= Vector3.forward * prey.chasePushForce+ (Vector3.right * (prey.transform.position.x - transform.position.x)).normalized * prey.chaseSlideForce;
-            rb.AddForce(force, ForceMode.Acceleration);
+            distance= Vector3.ProjectOnPlane(distance,chaseDirection);
+
+            Vector3 force= chaseDirection * prey.chaseDefaultForce*100+ distance.normalized * prey.chaseSlideForce*50;
+            rb.AddForce(force);
             transform.LookAt(prey.transform.position);
         }
         else
