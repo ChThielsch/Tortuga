@@ -96,11 +96,13 @@ public class TurtleController : MonoBehaviour
             case MovementType.TopDown:
                 CameraManager.instance.ActiveTopDownCamera();
                 myRigidbody.useGravity = false;
+                myRigidbody.constraints = myRigidbody.constraints | RigidbodyConstraints.FreezePositionY;
                 break;
             case MovementType.Chase:
                 CameraManager.instance.ActiveChaseCamera();
                 myRigidbody.useGravity = false;
                 chaseWaitTime = 3;
+                myRigidbody.constraints = myRigidbody.constraints | RigidbodyConstraints.FreezePositionY;
                 break;
 
             case MovementType.Forward:
@@ -108,6 +110,7 @@ public class TurtleController : MonoBehaviour
             default:
                 CameraManager.instance.ActiveThirdPersonCamera();
                 myRigidbody.useGravity = false;
+                myRigidbody.constraints = myRigidbody.constraints & ~RigidbodyConstraints.FreezePositionY;
                 break;
         }
     }
