@@ -215,7 +215,7 @@ public class TurtleController : MonoBehaviour
         }
 
         // Calculate the total force to be applied, which includes the current force and force based on rotation
-        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation() + globalForce;
+        Vector3 totalForce = (currentDirection * currentForce) + GetForceBasedOnRotation(m_rotationForwardForce) + globalForce;
         // Apply the force to the Rigidbody
 
         myRigidbody.AddForce(totalForce);
@@ -302,6 +302,9 @@ public class TurtleController : MonoBehaviour
         // Determine the direction of rotation by calculating the difference between current and target angles
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
+        // Cache the difference as a forward force so turtle doesnt rotate on point
+        m_rotationForwardForce = Mathf.Abs(rotationDifference);
+
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
         float targetAngleZ = Mathf.Clamp(-rotationDifference, -topDownMaxAngleZ, topDownMaxAngleZ);
 
@@ -340,7 +343,7 @@ public class TurtleController : MonoBehaviour
         float rotationDifference = Mathf.DeltaAngle(currentEulerAngles.y, targetAngleY);
 
         // Clamp the rotation difference to the maximum allowed angle in the X-axis
-        float targetAngleZ=0;
+        float targetAngleZ = 0;
 
         Vector3 newEulerAngles;
         // If there is input (movement), update the new euler angles with interpolation towards the target angles
@@ -395,9 +398,14 @@ public class TurtleController : MonoBehaviour
                                      localRight * angleZ * -maxForceX * Time.fixedDeltaTime;
 
         // Set the y component of the force to 0
-        localFloatingForce.y = 0f;
+        localFloatingForce.y = 0f;
+
+        //localForward.Normalize();
+
+        Vector3 forwardForce = localForward * _forwardForceValue;
 
-        return localFloatingForce;
+
+        return localFloatingForce + forwardForce;
     }
 
     public static float ConvertAngleToRange(float angle)

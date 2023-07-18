@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2158.301, g: 2260.5022, b: 3278.2935, a: 1}
+  m_IndirectSpecularColor: {r: 1174.5634, g: 2683.5042, b: 4908.9067, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -38144,7 +38144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d0504e97969a1245b7adb23debf9879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementType: 4
+  movementType: 0
   myRigidbody: {fileID: 798341469}
   leftFin: {fileID: 274713270}
   rightFin: {fileID: 1507124464}
@@ -38175,7 +38175,7 @@ MonoBehaviour:
   chaseNormalZDistance: 8
   chaseMaxZDistance: 15
   chaseObject: {fileID: 2032255288}
-  chaseWaitTime: 0
+  chaseWaitTime: 3
 --- !u!136 &798341472
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -97489,7 +97489,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2010217403
 MonoBehaviour:
   m_ObjectHideFlags: 0
