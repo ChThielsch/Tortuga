@@ -17,8 +17,12 @@ public class EnemyDummy : MonoBehaviour
         bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase&& prey.chaseWaitTime<=0;
         if (valid)
         {
-            rb.AddForce(Vector3.forward * prey.chasePushForce, ForceMode.Acceleration);
-            rb.AddForce((Vector3.right*(prey.transform.position.x-transform.position.x)).normalized*prey.chaseSlideForce,ForceMode.Acceleration);
+            Vector3
+               chaseDirection = prey.currentDirection!=Vector3.zero ? prey.currentDirection : Vector3.forward,
+               chaseRight = Vector3.Cross(Vector3.up, chaseDirection);
+
+            Vector3 force= Vector3.forward * prey.chasePushForce+ (Vector3.right * (prey.transform.position.x - transform.position.x)).normalized * prey.chaseSlideForce;
+            rb.AddForce(force, ForceMode.Acceleration);
             transform.LookAt(prey.transform.position);
         }
         else
