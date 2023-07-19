@@ -59,20 +59,15 @@ public class TurtleController : MonoBehaviour
     public float topDownMaxAngleZ = 45;
 
     [Divider("Chase")]
-    public float chaseDefaultForce = 10;
-    [Range(0f, 45f)]
-    public float chaseSlideForce = 5;
-    public float chaseNormalZDistance = 5;
-    public float chaseMaxZDistance = 10;
-    public Transform chaseObject;
+    public float chaseXMovementSpeed = 100;
+    public float chaseXBounds = 10;
+    public float 
+        chaseMaxAdvance = 5,
+        chaseMinAdvance= 0;
+    public float chaseMaxAdjustSpeed = 5;
+    public ChaseLocus chaseLocus;
 
-    public float chaseWaitTime;
-
-    internal float currentChaseWaitTime;
-    internal Vector3 currentDirection;
-
-    private float m_turnForce;
-
+    public float m_turnForce;
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -104,7 +99,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Chase:
                 CameraManager.instance.ActiveChaseCamera();
                 myRigidbody.useGravity = false;
-                currentChaseWaitTime = chaseWaitTime;
+                chaseLocus.StartChase();
                 myRigidbody.constraints = myRigidbody.constraints | RigidbodyConstraints.FreezePositionY;
                 break;
 
@@ -116,6 +111,9 @@ public class TurtleController : MonoBehaviour
                 myRigidbody.constraints = myRigidbody.constraints & ~RigidbodyConstraints.FreezePositionY;
                 break;
         }
+        if (movementType!=MovementType.Chase)
+            chaseLocus.StopChase();
+
     }
 
     /// <summary>
@@ -139,17 +137,23 @@ public class TurtleController : MonoBehaviour
     /// <param name="_input">The input vector used to calculate the target rotation.</param>
     public void Move(Vector2 _input)
     {
-        // Get the current direction and force from the spline at the turtle's position
-        (Vector3 direction, float force) splineCurrent = SplineCurrentLink.GetAffectedDirection(transform.position);
-
+        (Vector3 direction, float force) splineCurrent= (Vector3.zero, 0);
         if (movementType == MovementType.Chase)
         {
-            if (chaseWaitTime < 0)
-                splineCurrent = ModifyChaseCurrent(_input, splineCurrent);
-            else chaseWaitTime -= Time.fixedDeltaTime;
+            splineCurrent = GetChaseCurrent(_input);
+        }
+        else
+        {
+            // Get the current direction and force from the spline at the turtle's position
+            splineCurrent = SplineCurrentLink.GetAffectedDirection(transform.position);
+
+            //Project it on the XZ plane if topdown for safety
+            if (movementType == MovementType.TopDown)
+                splineCurrent.direction = Vector3.ProjectOnPlane(splineCurrent.direction, Vector3.up);
         }
 
-        currentDirection = splineCurrent.direction;
+
+        Vector3 currentDirection = splineCurrent.direction;
         float currentForce = splineCurrent.force;
 
         Quaternion currentRotation = Quaternion.identity;
@@ -197,7 +201,7 @@ public class TurtleController : MonoBehaviour
             case MovementType.Chase:
                 // Calculate the rotation for top-down chase movement
                 movementRotation = currentRotation; /*GetChaseRotation(_input);*/
-                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce * 100;
+                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseXMovementSpeed;
                 break;
             default:
                 break;
@@ -208,7 +212,7 @@ public class TurtleController : MonoBehaviour
 
         // Weight the rotation between the current rotation and the movement rotation
         Quaternion finalRotation = Quaternion.identity;
-        if (inCurrent)
+        if (inCurrent&&movementType!=MovementType.Chase)
         {
             finalRotation = WeightRotation(currentRotation, movementRotation, rotationWeight);
         }
@@ -306,7 +310,33 @@ public class TurtleController : MonoBehaviour
         // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
         return Quaternion.Euler(newEulerAngles);
     }
+    
+    private Quaternion GetChaseRotation(Vector2 _input) => RotateTowardsDirection(chaseLocus.transform.forward);
 
+    public (Vector3, float) GetChaseCurrent(Vector2 _input)
+    {
+        Vector3
+            pos = chaseLocus.transform.position,
+            directionRaw = transform.position - pos;
+
+        //Project it on more planes etc.
+
+        float distanceRaw = directionRaw.magnitude;
+        float force = (distanceRaw / chaseMaxAdvance) * chaseMaxAdjustSpeed;
+
+        return (Vector3.zero,0);
+    }
+    public Vector3 ChaseMovement(Vector3 _input, Vector3 currentDirection)
+    {
+        return Vector3.zero;
+        //return Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce;
+
+        //Vector3 direction = Vector3.ProjectOnPlane(directionRaw, chaseLocus.transform.forward);
+        //pos += direction.normalized * Mathf.Min(direction.magnitude, chaseXBounds);
+        //direction = pos - transform.position;
+
+        //return (direction, force);
+    }
 
     private Vector3 GetRotationForce(float rotationDifference)
     {
@@ -325,28 +355,6 @@ public class TurtleController : MonoBehaviour
         // Apply the force to the rigidbody
         return averageDirection * forceMagnitude;
     }
-
-    private Quaternion GetChaseRotation(Vector2 _input) => RotateTowardsDirection(currentDirection);
-    public (Vector3, float) ModifyChaseCurrent(Vector3 _input, (Vector3 direction, float force) splineCurrent)
-    {
-        if (splineCurrent.direction == Vector3.zero)
-        {
-            splineCurrent.direction = Vector3.forward;
-            splineCurrent.force = chaseDefaultForce * 100f;
-        }
-
-        float chaseDistance = transform.position.z - chaseObject.position.z;
-        float pushScale = Mathf.LerpUnclamped(1f, 0.33f, (chaseDistance - chaseNormalZDistance) / chaseMaxZDistance);
-
-        splineCurrent.force *= pushScale;
-
-        return splineCurrent;
-    }
-    public Vector3 ChaseMovement(Vector3 _input, Vector3 currentDirection)
-    {
-        return Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce;
-    }
-
     private Vector3 GetForceBasedOnRotation()
     {
         Vector3 eulerAngles = transform.eulerAngles;

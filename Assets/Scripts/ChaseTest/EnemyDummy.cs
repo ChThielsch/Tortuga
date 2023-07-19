@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyDummy : MonoBehaviour
 {
+
     public PrototypeLevel level;
     public TurtleController prey;
     Rigidbody rb;
@@ -14,7 +15,7 @@ public class EnemyDummy : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase&& prey.currentChaseWaitTime <= 0;
+        bool valid = rb != null && prey != null && prey.movementType == TurtleController.MovementType.Chase && prey.chaseWaitTime <= 0;
         if (valid)
         {
             Vector3
@@ -22,9 +23,9 @@ public class EnemyDummy : MonoBehaviour
                chaseRight = Vector3.Cross(Vector3.up, chaseDirection),
                distance = prey.transform.position - transform.position;
 
-            distance= Vector3.ProjectOnPlane(distance,chaseDirection);
+            distance = Vector3.ProjectOnPlane(distance, chaseDirection);
 
-            Vector3 force= chaseDirection * prey.chaseDefaultForce*100+ distance.normalized * prey.chaseSlideForce*50;
+            Vector3 force = chaseDirection * prey.chaseDefaultForce * 100 + distance.normalized * prey.chaseSlideForce * 50;
             rb.AddForce(force);
             transform.LookAt(prey.transform.position);
         }

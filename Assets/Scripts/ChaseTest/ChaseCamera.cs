@@ -12,7 +12,10 @@ public class ChaseCamera : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        Vector3 vec= Quaternion.FromToRotation(Vector3.right,target.currentDirection!=Vector3.zero? target.currentDirection : Vector3.forward).eulerAngles;
+        Vector3
+            dir = target.chaseLocus.transform.forward,
+            vec = Quaternion.FromToRotation(Vector3.right, dir != Vector3.zero ? dir : Vector3.forward).eulerAngles;
+
         vec.x = 90;
         transform.rotation = Quaternion.Euler(vec);
     }
