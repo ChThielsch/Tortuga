@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 1181.0675, g: 2691.719, b: 4927.094, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -24122,7 +24122,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416528795}
   m_LocalRotation: {x: 0.5051741, y: -0.4974542, z: -0.49481323, w: 0.50249213}
-  m_LocalPosition: {x: 2.1485808, y: 2.0333261, z: -3.7726293}
+  m_LocalPosition: {x: 2.16, y: 2.03, z: -6.81}
   m_LocalScale: {x: 2.4999995, y: 2, z: 1.7499998}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -38244,7 +38244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d0504e97969a1245b7adb23debf9879, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementType: 0
+  movementType: 4
   myRigidbody: {fileID: 798341469}
   leftFin: {fileID: 274713270}
   rightFin: {fileID: 1507124464}
@@ -38271,8 +38271,10 @@ MonoBehaviour:
   chaseXMovementSpeed: 100
   chaseXBounds: 5
   chaseMaxAdvance: 5
+  chaseMaxFallBehind: 0
   chaseMaxAdjustSpeed: 25
   chaseLocus: {fileID: 1075145756}
+  m_turnForce: 5
 --- !u!136 &798341472
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -47148,8 +47150,8 @@ MonoBehaviour:
   m_PlayOnAwake: 0
   m_LoopMode: 0
   m_Method: 1
-  m_Duration: 195.55402
-  m_MaxSpeed: 3
+  m_Duration: 117.33241
+  m_MaxSpeed: 5
   m_EasingMode: 0
   m_AlignmentMode: 1
   m_ObjectForwardAxis: 2
@@ -64979,6 +64981,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Radius
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 232478836104268834, guid: 43b4e5032f0b1b5418266de7792448eb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1170000508008271594, guid: 43b4e5032f0b1b5418266de7792448eb,
         type: 3}
@@ -101016,7 +101023,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2010217403
 MonoBehaviour:
   m_ObjectHideFlags: 0

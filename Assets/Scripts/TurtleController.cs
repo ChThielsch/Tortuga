@@ -63,7 +63,7 @@ public class TurtleController : MonoBehaviour
     public float chaseXBounds = 10;
     public float 
         chaseMaxAdvance = 5,
-        chaseMinAdvance= 0;
+        chaseMaxFallBehind= 0;
     public float chaseMaxAdjustSpeed = 5;
     public ChaseLocus chaseLocus;
 
@@ -200,8 +200,8 @@ public class TurtleController : MonoBehaviour
                 break;
             case MovementType.Chase:
                 // Calculate the rotation for top-down chase movement
-                movementRotation = currentRotation; /*GetChaseRotation(_input);*/
-                totalForce += Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseXMovementSpeed;
+                movementRotation = currentRotation;
+                totalForce += GetChaseMovement(_input);
                 break;
             default:
                 break;
@@ -312,30 +312,51 @@ public class TurtleController : MonoBehaviour
     }
     
     private Quaternion GetChaseRotation(Vector2 _input) => RotateTowardsDirection(chaseLocus.transform.forward);
-
     public (Vector3, float) GetChaseCurrent(Vector2 _input)
     {
         Vector3
-            pos = chaseLocus.transform.position,
-            directionRaw = transform.position - pos;
+            locusPos = chaseLocus.transform.position,
+            locusDir = chaseLocus.transform.forward;
+        Vector3 directionRaw = transform.position - locusPos;
 
-        //Project it on more planes etc.
+        Vector3
+            ZLine = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(directionRaw, chaseLocus.transform.up), chaseLocus.transform.right);
 
-        float distanceRaw = directionRaw.magnitude;
-        float force = (distanceRaw / chaseMaxAdvance) * chaseMaxAdjustSpeed;
+        bool isAhead = locusDir * ZLine.magnitude == ZLine;
 
-        return (Vector3.zero,0);
+        float locusDisance = ZLine.magnitude;
+        float maxDistance = isAhead ? chaseMaxAdvance : chaseMaxFallBehind;
+        float force = (locusDisance / Mathf.Max(maxDistance,0.1f)) * chaseMaxAdjustSpeed;
+
+       
+        return (locusDir,force);
     }
-    public Vector3 ChaseMovement(Vector3 _input, Vector3 currentDirection)
+    public Vector3 GetChaseMovement(Vector3 _input)
     {
-        return Vector3.zero;
-        //return Vector3.Cross(Vector3.up, currentDirection) * -_input.y * chaseSlideForce;
+        Vector3
+            locusPos = chaseLocus.transform.position,
+            locusDir = chaseLocus.transform.forward,
+            locusRight = Vector3.Cross(Vector3.up, chaseLocus.transform.forward);
+        Vector3 directionRaw = transform.position - locusPos;
 
-        //Vector3 direction = Vector3.ProjectOnPlane(directionRaw, chaseLocus.transform.forward);
-        //pos += direction.normalized * Mathf.Min(direction.magnitude, chaseXBounds);
-        //direction = pos - transform.position;
+        Vector3 XLine = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(directionRaw, chaseLocus.transform.up), chaseLocus.transform.forward);
 
-        //return (direction, force);
+        Vector3 movement=Vector3.zero;
+        //if (_input.y == 0) //Steer back to center without input
+        //    movement = XLine * chaseXMovementSpeed*0.5f;
+        //else
+        movement = locusRight * _input.y;
+
+        Vector3 targetPos= XLine + movement;
+        targetPos = targetPos.normalized * Mathf.Min(targetPos.magnitude, chaseXBounds);
+        targetPos = locusPos + targetPos;
+
+        Vector3 direction = targetPos - transform.position;
+        direction = direction * chaseXMovementSpeed;
+
+        Debug.DrawRay(transform.position,direction);
+
+        return direction;
     }
 
     private Vector3 GetRotationForce(float rotationDifference)
