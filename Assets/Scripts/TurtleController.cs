@@ -61,13 +61,12 @@ public class TurtleController : MonoBehaviour
     [Divider("Chase")]
     public float chaseXMovementSpeed = 100;
     public float chaseXBounds = 10;
-    public float 
-        chaseMaxAdvance = 5,
-        chaseMaxFallBehind= 0;
+    public float chaseMaxAdvance = 5;
+    public float chaseMaxFallBehind = 0;
     public float chaseMaxAdjustSpeed = 5;
     public ChaseLocus chaseLocus;
 
-    public float m_turnForce;
+    [ShowOnly][SerializeField] private float m_turnForce;
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
@@ -111,9 +110,8 @@ public class TurtleController : MonoBehaviour
                 myRigidbody.constraints = myRigidbody.constraints & ~RigidbodyConstraints.FreezePositionY;
                 break;
         }
-        if (movementType!=MovementType.Chase)
+        if (movementType != MovementType.Chase)
             chaseLocus.StopChase();
-
     }
 
     /// <summary>
@@ -137,7 +135,7 @@ public class TurtleController : MonoBehaviour
     /// <param name="_input">The input vector used to calculate the target rotation.</param>
     public void Move(Vector2 _input)
     {
-        (Vector3 direction, float force) splineCurrent= (Vector3.zero, 0);
+        (Vector3 direction, float force) splineCurrent = (Vector3.zero, 0);
         if (movementType == MovementType.Chase)
         {
             splineCurrent = GetChaseCurrent(_input);
@@ -212,7 +210,7 @@ public class TurtleController : MonoBehaviour
 
         // Weight the rotation between the current rotation and the movement rotation
         Quaternion finalRotation = Quaternion.identity;
-        if (inCurrent&&movementType!=MovementType.Chase)
+        if (inCurrent && movementType != MovementType.Chase)
         {
             finalRotation = WeightRotation(currentRotation, movementRotation, rotationWeight);
         }
@@ -310,7 +308,7 @@ public class TurtleController : MonoBehaviour
         // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
         return Quaternion.Euler(newEulerAngles);
     }
-    
+
     private Quaternion GetChaseRotation(Vector2 _input) => RotateTowardsDirection(chaseLocus.transform.forward);
     public (Vector3, float) GetChaseCurrent(Vector2 _input)
     {
@@ -326,10 +324,10 @@ public class TurtleController : MonoBehaviour
 
         float locusDisance = ZLine.magnitude;
         float maxDistance = isAhead ? chaseMaxAdvance : chaseMaxFallBehind;
-        float force = (locusDisance / Mathf.Max(maxDistance,0.1f)) * chaseMaxAdjustSpeed;
+        float force = (locusDisance / Mathf.Max(maxDistance, 0.1f)) * chaseMaxAdjustSpeed;
 
-       
-        return (locusDir,force);
+
+        return (locusDir, force);
     }
     public Vector3 GetChaseMovement(Vector3 _input)
     {
@@ -341,20 +339,20 @@ public class TurtleController : MonoBehaviour
 
         Vector3 XLine = Vector3.ProjectOnPlane(Vector3.ProjectOnPlane(directionRaw, chaseLocus.transform.up), chaseLocus.transform.forward);
 
-        Vector3 movement=Vector3.zero;
+        Vector3 movement = Vector3.zero;
         //if (_input.y == 0) //Steer back to center without input
         //    movement = XLine * chaseXMovementSpeed*0.5f;
         //else
         movement = locusRight * _input.y;
 
-        Vector3 targetPos= XLine + movement;
+        Vector3 targetPos = XLine + movement;
         targetPos = targetPos.normalized * Mathf.Min(targetPos.magnitude, chaseXBounds);
         targetPos = locusPos + targetPos;
 
         Vector3 direction = targetPos - transform.position;
         direction = direction * chaseXMovementSpeed;
 
-        Debug.DrawRay(transform.position,direction);
+        Debug.DrawRay(transform.position, direction);
 
         return direction;
     }
