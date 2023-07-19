@@ -3,36 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Splines;
 
-public class ChaseLocus : MonoBehaviour
+public class ChaseControl : MonoBehaviour
 {
-    private SplineAnimate lure;
+    [HideInInspector]public SplineAnimate rail;
     public bool inChase;
     public float chaseTime;
 
+    public Vector3 forward => transform.forward;
+    public Vector3 right => transform.right;
+    public Vector3 up => transform.up;
+
     private void Awake()
     {
-        lure= GetComponent<SplineAnimate>();
+        rail= GetComponent<SplineAnimate>();
+
+        StartChase();
     }
 
     public void StartChase()
     {
-        lure.Pause();
-        lure.Invoke("Play",3);
+        rail.Pause();
+        rail.Invoke("Play",2);
         chaseTime = 0;
-        lure.ElapsedTime = 0;
+        rail.ElapsedTime = 0;
     }
     public void StopChase()
     {
-        lure.Pause();
+        rail.Pause();
         chaseTime=0;
-        lure.ElapsedTime = 0;
+        rail.ElapsedTime = 0;
     }
     private void FixedUpdate()
     {
         if (inChase)
         {
             chaseTime += Time.fixedDeltaTime;
-            lure.ElapsedTime = Mathf.Max(0, chaseTime);
         }
     }
 

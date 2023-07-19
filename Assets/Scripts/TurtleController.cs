@@ -64,7 +64,7 @@ public class TurtleController : MonoBehaviour
     public float chaseMaxAdvance = 5;
     public float chaseMaxFallBehind = 0;
     public float chaseMaxAdjustSpeed = 5;
-    public ChaseLocus chaseLocus;
+    public ChaseControl chaseLocus;
 
     [ShowOnly][SerializeField] private float m_turnForce;
     private void OnDrawGizmos()
