@@ -21,6 +21,7 @@ public class ChasePredatorController : MonoBehaviour
 
     [Header("Movement")]
     public float sideMoveSpeed;
+    public float wiggleFrequency;
     public float catchUpFrequency;
     public float 
         minCatchUpDistance,
@@ -64,7 +65,7 @@ public class ChasePredatorController : MonoBehaviour
             (Mathf.Sin(chase.chaseTime * catchUpFrequency) + 1) * 0.5f *
             Mathf.Lerp(minCatchUpDistance,maxCatchUpDistance,(Mathf.Sin(chase.chaseTime * catchUpFrequency*0.66f) + 1) * 0.5f );
 
-        Vector3 sidePosition = Vector3.right * moveSideDistance;
+        Vector3 sidePosition = Vector3.right * Mathf.Lerp(moveSideDistance-1f, moveSideDistance+1f,(Mathf.Sin(chase.chaseTime*wiggleFrequency)+1)*0.5f);
         Vector3 advancePosition = Vector3.forward * catchUpDistance;
 
         Vector3 position = sidePosition + advancePosition;

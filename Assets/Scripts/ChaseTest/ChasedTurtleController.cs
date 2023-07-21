@@ -27,6 +27,7 @@ public class ChasedTurtleController : MonoBehaviour
     [Header("Side Move [A|D]")]
     [Range(0, 4)] public float maxSideDistance=3;
     [Range(0, 15)] public float sideMoveSpeed=8;
+    [ShowOnly][SerializeField]private float movementStrength;
 
     [Header("Advance [Space]")]
     [Range(1, 7)] public float maxAdvanceDistance = 5;
@@ -102,12 +103,15 @@ public class ChasedTurtleController : MonoBehaviour
     public void Move(Vector2 input)
     {
         //Take Input
-        moveSideDistance += input.y * sideMoveSpeed * Time.fixedDeltaTime;
+        float i = input.y == 0 ? -Mathf.Sign(movementStrength) * 0.5f : input.y;
+        movementStrength = Mathf.Clamp(movementStrength + i * 2 * Time.fixedDeltaTime, -1,1);
+
+        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime*movementStrength;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);
 
-        if (input.y != 0) rotationAngle += input.y * rotationSpeed*Time.fixedDeltaTime;
-        else rotationAngle += -Mathf.Sign(rotationAngle) * rotationSpeed;
-        rotationAngle = Mathf.Clamp(rotationAngle,-maxRotationAngle,maxRotationAngle);
+        //if (input.y != 0) rotationAngle += input.y * rotationSpeed*Time.fixedDeltaTime;
+        //else rotationAngle += -Mathf.Sign(rotationAngle) * rotationSpeed;
+        //rotationAngle = Mathf.Clamp(rotationAngle,-maxRotationAngle,maxRotationAngle);
 
         advanceDistance -= advancePassiveDropoff*Time.fixedDeltaTime;
         advanceDistance = Mathf.Clamp(advanceDistance, -maxBehindDistance, maxAdvanceDistance);
@@ -119,10 +123,10 @@ public class ChasedTurtleController : MonoBehaviour
         Vector3 position = sidePosition + advancePosition;
         transform.localPosition = position;
 
-        Vector3 forward = Quaternion.AngleAxis(rotationAngle, chase.up) * chase.forward;
-        Quaternion rotation = Quaternion.LookRotation(forward,chase.up);
+        //Vector3 forward = Quaternion.AngleAxis(rotationAngle, chase.up) * chase.forward;
+        //Quaternion rotation = Quaternion.LookRotation(forward,chase.up);
         
-        transform.rotation = Quaternion.Slerp(transform.rotation,rotation,0.5f);
+        //transform.rotation = Quaternion.Slerp(transform.rotation,rotation,0.5f);
     }
     public void Push()
     {

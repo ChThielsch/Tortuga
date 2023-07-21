@@ -347,7 +347,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 70
+  field of view: 90
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -1331,9 +1331,9 @@ MonoBehaviour:
   predator: {fileID: 1217656848}
   prey: {fileID: 1678026789}
   PositionMargin: 7
-  ScaleMargin: 3
+  ScaleMargin: 8
   maxScale: 90
-  minScale: 75
+  minScale: 85
 --- !u!1 &666360719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1723,14 +1723,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chase: {fileID: 1075145756}
   prey: {fileID: 1678026789}
-  startBaseDistance: 8
+  startBaseDistance: 7
   endBaseDistance: 5
   maxRotationAngle: 20
   rotationSpeed: 10
   sideMoveSpeed: 2
+  wiggleFrequency: 0.5
   catchUpFrequency: 1
-  minCatchUpDistance: 4.5
-  maxCatchUpDistance: 6.5
+  minCatchUpDistance: 3
+  maxCatchUpDistance: 5
   catchUpDistance: 0
   moveSideDistance: 0
   rotationAngle: 0
@@ -2447,7 +2448,8 @@ MonoBehaviour:
   maxRotationAngle: 10
   rotationSpeed: 5
   maxSideDistance: 3
-  sideMoveSpeed: 8
+  sideMoveSpeed: 4
+  movementStrength: 0
   maxAdvanceDistance: 5
   maxBehindDistance: 7
   advancePushPower: 2.5
@@ -2485,8 +2487,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  advancePushCooldown: 1.15
-  advancePassiveDropoff: 1.25
+  advancePushCooldown: 1.05
+  advancePassiveDropoff: 1.5
   advancePushCooldownTimer: 0
   advanceDistance: 0
   moveSideDistance: 0
@@ -2679,7 +2681,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 70
+    FieldOfView: 90
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
