@@ -10,19 +10,31 @@ public class ChaseCameraController : MonoBehaviour
     public ChasedTurtleController prey;
 
     public float PositionMargin = 5;
+    public AnimationCurve PositionCurve;
+    public float PositionAdjustSpeed = 3;
     public float ScaleMargin = 6;
+    public AnimationCurve ScaleCurve;
+    public float ScaleAdjustSpeed = 3;
+
     public float
-        maxScale,
-        minScale;
+    maxScale,
+    minScale;
 
     private void Update()
     {
-        float turtleDistance = (prey.transform.position - predator.transform.position).magnitude;
+        Vector3 distance = (prey.transform.localPosition - predator.transform.localPosition);
+        float turtleDistance = distance.magnitude;
 
-        Vector3 averagePosition = Vector3.Lerp(predator.transform.localPosition, Vector3.zero, Mathf.Min(PositionMargin, turtleDistance / PositionMargin));
+        Vector3 rawMidPoint = (prey.transform.localPosition + predator.transform.localPosition) * 0.5f;
+        Vector3 ZMidPoint = Vector3.ProjectOnPlane(rawMidPoint, prey.chase.right);
 
-        cam.m_Lens.FieldOfView = Mathf.Lerp(minScale, maxScale, Mathf.Min(ScaleMargin, turtleDistance / ScaleMargin));
+        Vector3 pos = Vector3.Lerp(rawMidPoint,ZMidPoint, PositionCurve.Evaluate(turtleDistance / PositionMargin));
+        Vector3 posDir = pos - transform.localPosition;
+        transform.localPosition += posDir.normalized * Mathf.Min(PositionAdjustSpeed * Time.deltaTime, posDir.magnitude);
 
-        transform.localPosition = averagePosition;
+        float targetFOV = Mathf.Lerp(minScale, maxScale, ScaleCurve.Evaluate(turtleDistance / ScaleMargin));
+        float FOVdiff = targetFOV - cam.m_Lens.FieldOfView;
+        cam.m_Lens.FieldOfView += Mathf.Min(Mathf.Sign(FOVdiff) * ScaleAdjustSpeed*Time.deltaTime, FOVdiff);
+
     }
 }
