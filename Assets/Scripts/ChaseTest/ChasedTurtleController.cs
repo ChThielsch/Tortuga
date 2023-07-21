@@ -103,8 +103,8 @@ public class ChasedTurtleController : MonoBehaviour
     public void Move(Vector2 input)
     {
         //Take Input
-        float i = input.y == 0 ? -Mathf.Sign(movementStrength) * 0.5f : input.y;
-        movementStrength = Mathf.Clamp(movementStrength + i * 2 * Time.fixedDeltaTime, -1,1);
+        float i = input.y == 0 ? -Mathf.Sign(movementStrength) * 0.75f : input.y;
+        movementStrength = Mathf.Clamp(movementStrength + i * 3 * Time.fixedDeltaTime, -1,1);
 
         moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime*movementStrength;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);

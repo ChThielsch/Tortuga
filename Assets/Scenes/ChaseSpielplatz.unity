@@ -1330,10 +1330,10 @@ MonoBehaviour:
   cam: {fileID: 1951848682}
   predator: {fileID: 1217656848}
   prey: {fileID: 1678026789}
-  PositionMargin: 7
-  ScaleMargin: 8
+  PositionMargin: 5
+  ScaleMargin: 10
   maxScale: 90
-  minScale: 85
+  minScale: 70
 --- !u!1 &666360719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1675,6 +1675,7 @@ MonoBehaviour:
   rail: {fileID: 0}
   inChase: 0
   chaseTime: 0
+  lerp: 0
 --- !u!1 &1217656846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1724,7 +1725,7 @@ MonoBehaviour:
   chase: {fileID: 1075145756}
   prey: {fileID: 1678026789}
   startBaseDistance: 7
-  endBaseDistance: 5
+  endBaseDistance: 2.5
   maxRotationAngle: 20
   rotationSpeed: 10
   sideMoveSpeed: 2
@@ -2419,7 +2420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1678026782}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2450,7 +2451,7 @@ MonoBehaviour:
   maxSideDistance: 3
   sideMoveSpeed: 4
   movementStrength: 0
-  maxAdvanceDistance: 5
+  maxAdvanceDistance: 4
   maxBehindDistance: 7
   advancePushPower: 2.5
   advancePushDuration: 2
@@ -2477,7 +2478,7 @@ MonoBehaviour:
       outWeight: 0.26147932
     - serializedVersion: 3
       time: 1
-      value: 0.6992443
+      value: 0.79881144
       inSlope: -0.042007014
       outSlope: -0.042007014
       tangentMode: 0
@@ -2487,7 +2488,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  advancePushCooldown: 1.05
+  advancePushCooldown: 1.1
   advancePassiveDropoff: 1.5
   advancePushCooldownTimer: 0
   advanceDistance: 0

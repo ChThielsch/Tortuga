@@ -16,7 +16,7 @@ public class ChaseControl : MonoBehaviour
     public Vector3 right => transform.right;
     public Vector3 up => transform.up;
 
-    public float lerp => chaseTime / rail.Duration;
+    public float lerp;
 
     private void Awake()
     {
@@ -54,6 +54,8 @@ public class ChaseControl : MonoBehaviour
         if (inChase)
         {
             chaseTime += Time.fixedDeltaTime;
+            lerp= rail.ElapsedTime / rail.Duration;
+            Debug.Log(lerp);
             if (lerp==1)
             {
                 StopChase();
