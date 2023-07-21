@@ -12,7 +12,7 @@ public class DividerDrawer : DecoratorDrawer
             position.y += EditorGUIUtility.singleLineHeight;
 
             Rect lineRect = new Rect(position.x, position.y + EditorGUIUtility.singleLineHeight * 0.5f, position.width, 1.5f);
-            EditorGUI.DrawRect(lineRect, Color.gray);
+            EditorGUI.DrawRect(lineRect, dividerAttribute.color); // Use the color specified in the attribute.
         }
     }
 
