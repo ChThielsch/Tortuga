@@ -5,39 +5,60 @@ using UnityEngine.Splines;
 
 public class ChaseControl : MonoBehaviour
 {
-    [HideInInspector]public SplineAnimate rail;
+    [HideInInspector] public SplineAnimate rail;
     public bool inChase;
     public float chaseTime;
+
+    public delegate void ChaseDelegate();
+    public ChaseDelegate OnStartChase, OnEndChase;
 
     public Vector3 forward => transform.forward;
     public Vector3 right => transform.right;
     public Vector3 up => transform.up;
 
+    public float lerp => chaseTime / rail.Duration;
+
     private void Awake()
     {
         rail= GetComponent<SplineAnimate>();
+    }
 
-        StartChase();
+    private void Start()
+    {
+        Invoke("StartChase", 1);
     }
 
     public void StartChase()
-    {
-        rail.Pause();
-        rail.Invoke("Play",2);
+    {        
         chaseTime = 0;
-        rail.ElapsedTime = 0;
+        rail.Restart(false);
+        rail.Play();
+        inChase= true;
+        OnStartChase?.Invoke();
+
+        Debug.Log("Start Chase");
     }
     public void StopChase()
     {
         rail.Pause();
-        chaseTime=0;
+        rail.Restart(false);
+        chaseTime = 0;
         rail.ElapsedTime = 0;
+        inChase = false;
+        OnEndChase?.Invoke();
+
+        Debug.Log("Stop Chase");
     }
     private void FixedUpdate()
     {
         if (inChase)
         {
             chaseTime += Time.fixedDeltaTime;
+            if (lerp==1)
+            {
+                StopChase();
+                StartChase();
+            }
         }
     }
 
