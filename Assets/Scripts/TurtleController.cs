@@ -33,6 +33,16 @@ public class TurtleController : MonoBehaviour
         Gizmos.color = Color.magenta;
         Gizmos.DrawLine(rightFin.position, rightFinDirectionHandle.position);
         Gizmos.DrawSphere(rightFinDirectionHandle.position, 0.05f);
+
+        //ONLY IN PLAYMODE FROM HERE ON_____________________
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.red;
+        Vector3 velocityVector = myRigidbody.velocity;
+        Gizmos.DrawRay(transform.position, velocityVector);
     }
 
     private void Start()
@@ -109,7 +119,7 @@ public class TurtleController : MonoBehaviour
         Quaternion movementRotation = currentMovementType.GetRotation(_input, myRigidbody);
 
         // Apply the force to the Rigidbody
-        myRigidbody.AddForce(currentMovementType.GetForceBasedOnRotation(transform));
+        myRigidbody.AddForce(currentMovementType.GetForceBasedOnRotation(transform), ForceMode.Acceleration);
 
         // Move the Rigidbody to the weighted rotation
         myRigidbody.MoveRotation(movementRotation);

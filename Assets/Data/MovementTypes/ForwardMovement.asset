@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ForwardMovement
   m_EditorClassIdentifier: 
   maxForceX: 300
-  maxForceZ: 400
+  maxForceZ: 2
   forceStrength: 20
   forceMode: 5
   swimDuration: 1.25
