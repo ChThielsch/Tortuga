@@ -44,6 +44,8 @@ public class ChasePredatorController : MonoBehaviour
         catchUpDistance = 0;
         moveSideDistance = 0;
         rotationAngle = 0;
+        attackCooldownTime = attackCooldown;
+        prototype_AttackIndicator.SetActive(false);
 
         StopAllCoroutines();
 
@@ -58,6 +60,8 @@ public class ChasePredatorController : MonoBehaviour
 
     public void Move()
     {
+        if (inAttack) return;
+
         float turtleDistance = prey.transform.localPosition.x - transform.localPosition.x;
         float sideDistance = Mathf.Sign(turtleDistance) * sideMoveSpeed * Time.fixedDeltaTime;
         if (Mathf.Abs(sideDistance) > Mathf.Abs(turtleDistance)) sideDistance = turtleDistance;
@@ -73,6 +77,44 @@ public class ChasePredatorController : MonoBehaviour
         Vector3 position = sidePosition + advancePosition;
         transform.localPosition = Vector3.back * baseDistance + position;
 
+        attackCooldownTime -= Time.fixedDeltaTime;
+        if (attackCooldownTime <= 0)
+        {
+            //Not working
+        }
+    }
+    [SerializeField] GameObject prototype_AttackIndicator;
+    public float attackCooldown=5;
+    float attackCooldownTime=5;
+    public float attackDistance=4;
+    public float attackSpeed = 2;
+    public AnimationCurve attackCurve;
+    bool inAttack;
+    private IEnumerator Attack_Execute()
+    {
+        inAttack = true;
+        prototype_AttackIndicator.SetActive(true);
+
+        yield return new WaitForSeconds(1);
+
+        float startDistance = catchUpDistance;
+        float i = 0;
+        while (i <= 1)
+        {
+            catchUpDistance = Mathf.Lerp(startDistance, attackDistance, attackCurve.Evaluate(i));
+
+            transform.localPosition = Vector3.back * baseDistance
+                +Vector3.right*moveSideDistance
+                +Vector3.forward*catchUpDistance;
+
+            i += attackSpeed * Time.deltaTime;
+
+            yield return null;
+        }
+        prototype_AttackIndicator.SetActive(false);
+
+        attackCooldownTime = Random.Range(attackCooldown * 0.75f, attackCooldown * 1.25f);
+        inAttack = false;
     }
 
     private void OnTriggerEnter(Collider other)

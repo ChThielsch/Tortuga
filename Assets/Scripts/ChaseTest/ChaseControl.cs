@@ -18,14 +18,9 @@ public class ChaseControl : MonoBehaviour
 
     public float lerp;
 
-    [SerializeField]private float rotationUpdateInterval = 1f; // Time interval to update the rotation
-    private float timeSinceLastUpdate = 0f;
-    public float previousRotationY;
-
     private void Awake()
     {
         rail= GetComponent<SplineAnimate>();
-        previousRotationY = transform.rotation.eulerAngles.y;
     }
 
     private void Start()
@@ -65,17 +60,6 @@ public class ChaseControl : MonoBehaviour
             {
                 StopChase();
                 StartChase();
-            }
-
-            timeSinceLastUpdate += Time.deltaTime;
-            if (timeSinceLastUpdate >= rotationUpdateInterval)
-            {
-                float 
-                    currentRotationY = transform.rotation.eulerAngles.y,
-                    rotationDeltaY = Mathf.DeltaAngle(previousRotationY, currentRotationY);
-
-                timeSinceLastUpdate = 0f;
-                previousRotationY = currentRotationY;
             }
         }
     }

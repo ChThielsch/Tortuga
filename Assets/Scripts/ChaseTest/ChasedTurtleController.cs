@@ -35,15 +35,13 @@ public class ChasedTurtleController : MonoBehaviour
     [Tooltip("How will speed be applied. Don't return to 0 to make it gain advance permanently.")]
     public AnimationCurve advancePushCurve;
     public float advancePushCooldown =1;
-    [Space]
-    [Tooltip("How far does the turtle fall behind per second?")][Range(0,2)] public float advancePassiveDropoff=0.5f;
+    public float Dropoff;
 
     [Divider("Stats")]
     [ShowOnly] [SerializeField] private float advancePushCooldownTimer = 0;
     [ShowOnly] [SerializeField] private float advanceDistance;
     [ShowOnly] [SerializeField] private float moveSideDistance, pushSideDistance;
     [ShowOnly] [SerializeField] private float rotationAngle;
-    [ShowOnly] [SerializeField] private float dropoffStrength;
     private void Start()
     {
         InitiateInput();
@@ -78,8 +76,6 @@ public class ChasedTurtleController : MonoBehaviour
 
     private void Update()
     {
-        if(chase.rail.ElapsedTime==0) advanceDistance = 0;
-
         movementInput = -movementReference.action.ReadValue<Vector2>();
 
         if (chase.inChase&&swimInput)
@@ -95,21 +91,21 @@ public class ChasedTurtleController : MonoBehaviour
     private void FixedUpdate()
     {
         if(chase.inChase)
-        Move(movementInput);
+            Move(movementInput);
     }
 
     public void Move(Vector2 input)
     {
         //Take Input
         float i = input.y == 0 ? -Mathf.Sign(movementStrength) * 0.75f : input.y;
-        movementStrength = Mathf.Clamp(movementStrength + i * 3 * Time.fixedDeltaTime, -1,1);
+        movementStrength = Mathf.Clamp(movementStrength + i * 3 * Time.fixedDeltaTime, -1, 1);
 
-        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime*movementStrength;
+        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime * movementStrength;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);
 
-        dropoffStrength = DropoffStrength(advancePassiveDropoff,chase.previousRotationY);
-        advanceDistance -= dropoffStrength*Time.fixedDeltaTime;
-        advanceDistance = Mathf.Clamp(advanceDistance, -maxBehindDistance, 20);
+        if (maxAdvanceDistance < advanceDistance) advanceDistance -= Dropoff * advanceDistance/maxAdvanceDistance * Time.fixedDeltaTime;
+        else advanceDistance -= Dropoff * Time.fixedDeltaTime;
+        advanceDistance = Mathf.Clamp(advanceDistance, -maxBehindDistance, maxAdvanceDistance * 1.5f);
 
         //Make Vector
         Vector3 sidePosition = Vector3.right * (moveSideDistance + pushSideDistance);
@@ -124,55 +120,32 @@ public class ChasedTurtleController : MonoBehaviour
             rotationMargin = rotationAngle / 60,
             cooldownForce= Mathf.Pow(advancePushCooldownTimer / advancePushCooldown,1.5f);
 
-        float 
-            pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin)),
-            sideValue= advancePushPower*rotationMargin;
+        float
+            pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin));
 
         pushValue *= cooldownForce;
 
-        Advance(pushValue, sideValue, advancePushDuration);
+        Advance(pushValue, advancePushDuration);
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
 
         advancePushCooldownTimer = 0;
     }
 
-    public void Advance(float valueForward, float valueSide, float duration)
+    public void Advance(float valueForward, float duration)
     {
-        StartCoroutine(Advance_Execute(valueForward, valueSide, duration));
+        StartCoroutine(Advance_Execute(valueForward, duration));
     }
-    public IEnumerator Advance_Execute(float valueForward, float valueSide, float duration)
+    public IEnumerator Advance_Execute(float valueForward, float duration)
     {
         float time = 0;
-        float
-            lastForwardValue = 0,
-            lastSideValue = 0;
         while (time < duration)
         {
-            advanceDistance -= lastForwardValue;
-            pushSideDistance -= lastSideValue;
+            float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
 
-           float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
-           float sideValue = advancePushCurve.Evaluate(time / duration) * valueSide;
-
-            advanceDistance += forwardValue;
-            pushSideDistance += sideValue;
-
-            lastForwardValue = forwardValue;
-            lastSideValue = sideValue;
+            advanceDistance+=forwardValue;
 
             yield return null;
             time += Time.deltaTime;
         }
-    }
-
-    public float DropoffStrength(float dropoffBase, float yRot)
-    {
-        float yRelRot = (Mathf.Abs(yRot) / 30);
-        float dir = Mathf.Sign(yRot) > 0 ? -1 : 1;
-        float xRelPos = ((dir * transform.localPosition.x) / maxAdvanceDistance + 1) / 2;
-        float yRelPos = Mathf.Max(1, transform.localPosition.y / maxAdvanceDistance);
-        float multiplier = Mathf.Lerp(0.5f, 1.5f, xRelPos * yRelRot)*yRelPos;
-
-        return dropoffBase * multiplier;
     }
 }
