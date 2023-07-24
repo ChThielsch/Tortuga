@@ -1703,8 +1703,8 @@ MonoBehaviour:
   m_PlayOnAwake: 0
   m_LoopMode: 0
   m_Method: 1
-  m_Duration: 34.213936
-  m_MaxSpeed: 25
+  m_Duration: 57.023228
+  m_MaxSpeed: 15
   m_EasingMode: 0
   m_AlignmentMode: 1
   m_ObjectForwardAxis: 2
@@ -2471,10 +2471,11 @@ MonoBehaviour:
   chase: {fileID: 1075145756}
   maxSideDistance: 3
   sideMoveSpeed: 4
-  movementStrength: 0
+  movementStrengthY: 0
+  movementStrengthX: 0
   maxAdvanceDistance: 4
   maxBehindDistance: 7
-  advancePushPower: 0.1
+  advancePushPower: 0.075
   advancePushDuration: 2
   advancePushCurve:
     serializedVersion: 2
@@ -2510,7 +2511,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   advancePushCooldown: 1.1
-  Dropoff: 0.75
+  advanceDrive: 1.3
+  advanceDropoff: 1.5
   advancePushCooldownTimer: 0
   advanceDistance: 0
   moveSideDistance: 0
