@@ -24,7 +24,8 @@ public class ChasedTurtleController : MonoBehaviour
     [Header("Side Move [A|D]")]
     [Range(0, 4)] public float maxSideDistance=3;
     [Range(0, 15)] public float sideMoveSpeed=8;
-    [ShowOnly][SerializeField]private float movementStrength;
+    [ShowOnly] [SerializeField] private float movementStrengthY;
+    [ShowOnly] [SerializeField] private float movementStrengthX;
 
     [Header("Advance [Space]")]
     [Range(1, 7)] public float maxAdvanceDistance = 5;
@@ -35,7 +36,9 @@ public class ChasedTurtleController : MonoBehaviour
     [Tooltip("How will speed be applied. Don't return to 0 to make it gain advance permanently.")]
     public AnimationCurve advancePushCurve;
     public float advancePushCooldown =1;
-    public float Dropoff;
+    [Range(0,3)] public float 
+        advanceDrive = 1f,
+        advanceDropoff = 1.5f;
 
     [Divider("Stats")]
     [ShowOnly] [SerializeField] private float advancePushCooldownTimer = 0;
@@ -97,15 +100,22 @@ public class ChasedTurtleController : MonoBehaviour
     public void Move(Vector2 input)
     {
         //Take Input
-        float i = input.y == 0 ? -Mathf.Sign(movementStrength) * 0.75f : input.y;
-        movementStrength = Mathf.Clamp(movementStrength + i * 3 * Time.fixedDeltaTime, -1, 1);
+        float iy = input.y == 0 ? -Mathf.Sign(movementStrengthY) * 0.75f : input.y;
+        movementStrengthY = Mathf.Clamp(movementStrengthY + iy * 3 * Time.fixedDeltaTime, -1, 1);
 
-        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime * movementStrength;
+        float ix = -input.x<= 0 ? -Mathf.Sign(advanceDropoff) * 0.75f : -input.x;
+        movementStrengthX = Mathf.Clamp(movementStrengthX + ix * Time.fixedDeltaTime, 0, 1);
+
+
+        //Apply Values
+        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime * movementStrengthY;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);
 
-        if (maxAdvanceDistance < advanceDistance) advanceDistance -= Dropoff * advanceDistance/maxAdvanceDistance * Time.fixedDeltaTime;
-        else advanceDistance -= Dropoff * Time.fixedDeltaTime;
+        float gradualX = -input.x * advanceDrive * movementStrengthX;
+        gradualX -= advanceDropoff * Mathf.Max(1, advanceDistance / maxAdvanceDistance);
+        advanceDistance += gradualX * Time.fixedDeltaTime;
         advanceDistance = Mathf.Clamp(advanceDistance, -maxBehindDistance, maxAdvanceDistance * 1.5f);
+
 
         //Make Vector
         Vector3 sidePosition = Vector3.right * (moveSideDistance + pushSideDistance);
