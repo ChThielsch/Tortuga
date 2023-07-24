@@ -59,7 +59,9 @@ public class ChasePredatorController : MonoBehaviour
     public void Move()
     {
         float turtleDistance = prey.transform.localPosition.x - transform.localPosition.x;
-        moveSideDistance += Mathf.Sign(turtleDistance) * sideMoveSpeed * Time.fixedDeltaTime;
+        float sideDistance = Mathf.Sign(turtleDistance) * sideMoveSpeed * Time.fixedDeltaTime;
+        if (Mathf.Abs(sideDistance) > Mathf.Abs(turtleDistance)) sideDistance = turtleDistance;
+        moveSideDistance += sideDistance;
 
         catchUpDistance =
             (Mathf.Sin(chase.chaseTime * catchUpFrequency) + 1) * 0.5f *
