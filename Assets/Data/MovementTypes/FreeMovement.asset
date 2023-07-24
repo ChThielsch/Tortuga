@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a32e10b2177f643b5a45eaa82248fe, type: 3}
   m_Name: FreeMovement
   m_EditorClassIdentifier: 
-  maxForceX: 8
-  maxForceZ: 10
+  maxForceX: 10
+  maxForceZ: 8
   forceStrength: 20
   forceMode: 5
   swimDuration: 1.25
@@ -44,6 +44,6 @@ MonoBehaviour:
   rotationSpeedX: 1.25
   rotationSpeedY: 0.5
   rotationSpeedZ: 0.97
-  minAngleX: 25
+  minAngleX: 30
   maxAngleX: 60
   maxAngleZ: 45

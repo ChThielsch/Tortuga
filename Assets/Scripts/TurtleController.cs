@@ -123,6 +123,13 @@ public class TurtleController : MonoBehaviour
 
         // Move the Rigidbody to the weighted rotation
         myRigidbody.MoveRotation(movementRotation);
+
+        if (Vector3.Dot(myRigidbody.velocity, transform.forward) > 1)
+        {
+            Vector3 strafeForce = new Vector3(-_input.x, 0, 0) * 15;
+            Vector3 localStrafeForce = myRigidbody.transform.TransformDirection(strafeForce);
+            myRigidbody.AddForce(localStrafeForce, ForceMode.Acceleration);
+        }
     }
 
     public IEnumerator SwimRoutine(Vector3 _swimForceDirection)
