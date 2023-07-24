@@ -20,9 +20,9 @@ public class ChasedTurtleController : MonoBehaviour
     public ChaseControl chase;
 
     [Divider("Parameters")]
-    [Header("Rotation [A|D]")]
-    [Range(0,30)]public float maxRotationAngle=10;
-    [Range(0, 15)] public float rotationSpeed=5;
+    //[Header("Rotation [A|D]")]
+    //[Range(0,30)]public float maxRotationAngle=10;
+    //[Range(0, 15)] public float rotationSpeed=5;
 
     [Header("Side Move [A|D]")]
     [Range(0, 4)] public float maxSideDistance=3;
@@ -92,7 +92,7 @@ public class ChasedTurtleController : MonoBehaviour
         advancePushCooldownTimer = Mathf.Min(advancePushCooldownTimer + Time.deltaTime, advancePushCooldown);
 
         turtleAnimator.SetFloat(Constants.AnimatorRotationZ, 0, 1f, Time.deltaTime);
-        turtleAnimator.SetFloat(Constants.AnimatorRotationX, rotationAngle/maxRotationAngle, 1f, Time.deltaTime);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationX, movementInput.y*0.5f, 1f, Time.deltaTime);
     }
     private void FixedUpdate()
     {
