@@ -22,14 +22,14 @@ public class ChasedTurtleController : MonoBehaviour
     [Divider("Parameters")]
 
     [Header("Side Move [A|D]")]
-    [Range(0, 4)] public float maxSideDistance=3;
+    [Range(0, 6)] public float maxSideDistance=3;
     [Range(0, 15)] public float sideMoveSpeed=8;
     [ShowOnly] [SerializeField] private float movementStrengthY;
     [ShowOnly] [SerializeField] private float movementStrengthX;
 
     [Header("Advance [Space]")]
-    [Range(1, 7)] public float maxAdvanceDistance = 5;
-    [Range(1, 7)] public float maxBehindDistance = 5;
+    [Range(1, 12)] public float maxAdvanceDistance = 5;
+    [Range(1, 12)] public float maxBehindDistance = 5;
     [Space]
     [Range(0, 5)] public float advancePushPower =2;
     [Range(0, 5)] public float advancePushDuration = 1;
@@ -42,7 +42,7 @@ public class ChasedTurtleController : MonoBehaviour
 
     [Divider("Stats")]
     [ShowOnly] [SerializeField] private float advancePushCooldownTimer = 0;
-    [ShowOnly] [SerializeField] private float advanceDistance;
+    [ShowOnly] [SerializeField] public float advanceDistance;
     [ShowOnly] [SerializeField] private float moveSideDistance, pushSideDistance;
     [ShowOnly] [SerializeField] private float rotationAngle;
     private void Start()
@@ -137,6 +137,11 @@ public class ChasedTurtleController : MonoBehaviour
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
 
         advancePushCooldownTimer = 0;
+    }
+    public void Collide(float strength, float duration)
+    {
+        Debug.Log("Collide");
+        Advance(-strength, duration);
     }
 
     public void Advance(float valueForward, float duration)
