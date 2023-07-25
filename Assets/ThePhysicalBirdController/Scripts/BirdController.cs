@@ -349,9 +349,6 @@ public class Flying : CrashAwareBirdState
         {
             float uplift = ctrlRef.Profile.LiftCoefficient * (1.2f / 2.0f) * body.velocity.sqrMagnitude * BirdController.angleOfAttack * (-Vector3.Dot(body.velocity.normalized, RollPitchModelUp)) * Mathf.Clamp01(Vector3.Dot(body.velocity.normalized, RollPitchModelForward));
             upliftForce = Vector3.Cross(body.velocity.normalized, RollPitchModelRight) * uplift * normalizedGlideArea;
-            //dont apply this for the moment
-            //float upliftResistance = Profile.LiftCoefficients.y * (1.2f / 2.0f) * body.velocity.sqrMagnitude * (1.0f - angleOfAttack) * Mathf.Clamp01(Vector3.Dot(body.velocity.normalized, RollPitchModelForward));
-            //upliftForce -= body.velocity.normalized * upliftResistance;
         }
         Debug.DrawLine(ctrlRef.transform.position, ctrlRef.transform.position + upliftForce, Color.blue);
 
@@ -364,9 +361,7 @@ public class Flying : CrashAwareBirdState
 
         //clamp velocity
         body.velocity = Vector3.ClampMagnitude(body.velocity, ctrlRef.Profile.SpeedLimit);
-    }
-
-    
+    }  
 }
 
 public class TakeOff : Flying

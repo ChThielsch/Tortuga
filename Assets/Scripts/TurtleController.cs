@@ -62,22 +62,18 @@ public class TurtleController : MonoBehaviour
         {
             case MovementTypeEnum.TopDown:
                 CameraManager.instance.ActiveTopDownCamera();
-                myRigidbody.useGravity = false;
                 currentMovementType = topDownMovementType;
                 break;
             case MovementTypeEnum.Forward:
                 currentMovementType = forwardMovementType;
                 CameraManager.instance.ActiveThirdPersonCamera();
-                myRigidbody.useGravity = true;
                 break;
             case MovementTypeEnum.Free:
                 currentMovementType = freeMovementType;
                 CameraManager.instance.ActiveThirdPersonCamera();
-                myRigidbody.useGravity = true;
                 break;
             default:
                 CameraManager.instance.ActiveThirdPersonCamera();
-                myRigidbody.useGravity = false;
                 break;
         }
     }
@@ -109,27 +105,15 @@ public class TurtleController : MonoBehaviour
     /// Moves the turtle based on the input provided and applies a continuous force in the direction of rotation.
     /// </summary>
     /// <param name="_input">The input vector used to calculate the target rotation.</param>
-    public void Move(Vector2 _input)
+    public void Move(float _swimInput,Vector2 _movementInput)
     {
         if (currentMovementType is null)
         {
             return;
         }
 
-        Quaternion movementRotation = currentMovementType.GetRotation(_input, myRigidbody);
-
-        // Apply the force to the Rigidbody
-        myRigidbody.AddForce(currentMovementType.GetForceBasedOnRotation(transform), ForceMode.Acceleration);
-
-        // Move the Rigidbody to the weighted rotation
-        myRigidbody.MoveRotation(movementRotation);
-
-        if (Vector3.Dot(myRigidbody.velocity, transform.forward) > 1)
-        {
-            Vector3 strafeForce = new Vector3(-_input.x, 0, 0) * 15;
-            Vector3 localStrafeForce = myRigidbody.transform.TransformDirection(strafeForce);
-            myRigidbody.AddForce(localStrafeForce, ForceMode.Acceleration);
-        }
+        currentMovementType.ApplyTorque(_movementInput, myRigidbody);
+        currentMovementType.ApplyConstantForce(_swimInput, _movementInput, myRigidbody);
     }
 
     public IEnumerator SwimRoutine(Vector3 _swimForceDirection)

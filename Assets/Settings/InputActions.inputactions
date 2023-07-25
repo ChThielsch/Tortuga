@@ -10,7 +10,7 @@
                     "type": "Value",
                     "id": "77eafa27-530b-4bf4-b249-8ab2b9778deb",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "StickDeadzone,InvertVector2(invertY=false),NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
                 },
@@ -19,21 +19,21 @@
                     "type": "Value",
                     "id": "c2b929dd-c72c-42e3-8d66-0be6b6a7d83e",
                     "expectedControlType": "Vector2",
-                    "processors": "",
+                    "processors": "StickDeadzone,NormalizeVector2",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Fire",
+                    "name": "Swim",
                     "type": "Button",
                     "id": "b31c8c8d-ba0e-4ca7-baa4-71c83cd53a22",
                     "expectedControlType": "Button",
-                    "processors": "",
+                    "processors": "Normalize(max=1)",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Swim",
+                    "name": "Boost",
                     "type": "Button",
                     "id": "4c8dae8b-f67a-4467-84d9-514cc1c7d429",
                     "expectedControlType": "Button",
@@ -224,7 +224,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Fire",
+                    "action": "Swim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -235,7 +235,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "Swim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -246,7 +246,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Fire",
+                    "action": "Swim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -257,7 +257,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Fire",
+                    "action": "Swim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -268,7 +268,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Fire",
+                    "action": "Swim",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -279,7 +279,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Swim",
+                    "action": "Boost",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -290,7 +290,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Swim",
+                    "action": "Boost",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

@@ -48,3 +48,9 @@ MonoBehaviour:
   maxAngleX: 45
   maxAngleY: 15
   maxAngleZ: 45
+  rollMaxAngle: 35
+  pitchMaxAngle: 33
+  yawMaxAngle: 45
+  rollTorque: 0.01
+  pitchTorque: 0.002
+  yawTorque: 0.14

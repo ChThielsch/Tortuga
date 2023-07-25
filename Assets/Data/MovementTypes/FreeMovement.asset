@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a32e10b2177f643b5a45eaa82248fe, type: 3}
   m_Name: FreeMovement
   m_EditorClassIdentifier: 
-  maxForceX: 10
-  maxForceZ: 8
   forceStrength: 20
   forceMode: 5
   swimDuration: 1.25
@@ -41,9 +39,38 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotationSpeedX: 1.25
-  rotationSpeedY: 0.5
-  rotationSpeedZ: 0.97
-  minAngleX: 30
-  maxAngleX: 60
-  maxAngleZ: 45
+  maxForce: 5
+  forceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  timeToReachMaxForce: 5
+  maxSpeed: 20
+  horizontalMultiplier: 1
+  verticalMultiplier: 1
+  weight: 0.5
+  rollMaxAngle: 35
+  pitchMaxAngle: 33
+  rollTorque: 0.01
+  pitchTorque: 0.002
+  yawTorque: 0.14

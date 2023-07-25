@@ -5,8 +5,9 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    public InputActionReference swimReference;
     public InputActionReference movementReference;
+    public InputActionReference swimReference;
+    public InputActionReference boostReference;
     [Space]
     public Animator turtleAnimator;
     [Space]
@@ -15,7 +16,8 @@ public class Player : MonoBehaviour
 
     private TurtleController m_turtleController;
     private Vector2 m_movementInput;
-    private bool m_swimInput;
+    private float m_swimInput;
+    private bool m_boostInput;
 
     private void Start()
     {
@@ -25,37 +27,38 @@ public class Player : MonoBehaviour
 
     private void InitiateInput()
     {
-        swimReference.action.started += ctx =>
+        boostReference.action.started += ctx =>
         {
-            m_swimInput = true;
+            m_boostInput = true;
             if (transform.position.y < topConstrain)
             {
                 m_turtleController.Swim();
             }
         };
 
-        swimReference.action.canceled += ctx =>
+        boostReference.action.canceled += ctx =>
         {
-            m_swimInput = false;
+            m_boostInput = false;
         };
     }
 
     private void Update()
     {
-        m_movementInput = -movementReference.action.ReadValue<Vector2>();
+        m_movementInput = movementReference.action.ReadValue<Vector2>();
+        m_swimInput = swimReference.action.ReadValue<float>();
 
-        if (transform.position.y <= bottomConstrain || (m_swimInput && transform.position.y < topConstrain))
+        if (transform.position.y <= bottomConstrain || (m_boostInput && transform.position.y < topConstrain))
         {
             m_turtleController.Swim();
             turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
 
-        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, m_movementInput.y,1f,Time.deltaTime);
+        turtleAnimator.SetFloat(Constants.AnimatorRotationZ, -m_movementInput.y, 1f, Time.deltaTime);
         turtleAnimator.SetFloat(Constants.AnimatorRotationX, m_movementInput.x, 1f, Time.deltaTime);
     }
 
     private void FixedUpdate()
     {
-        m_turtleController.Move(m_movementInput);
+        m_turtleController.Move(m_swimInput, m_movementInput);
     }
 }

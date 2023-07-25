@@ -15,10 +15,8 @@ public class TopDownMovement : MovementType
     [Tooltip("Sets the maximum angle of rotation around the Z-axis based on the input. This angle will be applied regardless of the input direction.")]
     public float maxAngleZ;
 
-    public override Quaternion GetRotation(Vector2 _input, Rigidbody _rigidbody)
+    public override void ApplyTorque(Vector2 _input, Rigidbody _rigidbody)
     {
-        _input *= -1;
-
         // Get the current euler angles of the rigidbody's rotation
         Vector3 currentEulerAngles = _rigidbody.rotation.eulerAngles;
 
@@ -27,7 +25,7 @@ public class TopDownMovement : MovementType
         if (_input != Vector2.zero)
         {
             // Calculate the target angle in the Y-axis based on the input vector
-            targetAngleY = Mathf.Atan2(_input.y, -_input.x) * Mathf.Rad2Deg;
+            targetAngleY = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg;
         }
 
         // Determine the direction of rotation by calculating the difference between current and target angles
@@ -52,7 +50,6 @@ public class TopDownMovement : MovementType
             );
         }
 
-        // Return the new rotation by setting the rigidbody's rotation using a quaternion created from the new euler angles
-        return Quaternion.Euler(newEulerAngles);
+        _rigidbody.MoveRotation(Quaternion.Euler(newEulerAngles));
     }
 }
