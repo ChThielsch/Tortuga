@@ -37266,7 +37266,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806125438}
-  m_LocalRotation: {x: 0.105143845, y: 0.6992459, z: -0.10514387, w: 0.6992458}
+  m_LocalRotation: {x: 0.105143845, y: 0.69924587, z: -0.10514385, w: 0.69924587}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -93695,7 +93695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2010217403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93747,7 +93747,7 @@ MonoBehaviour:
   smoothnessFadeDistance: 500
   refractionColor: {r: 0.1, g: 0.5, b: 0.5, a: 1}
   maxRefractionDistance: 0.5
-  absorptionDistance: 3
+  absorptionDistance: 10
   scatteringColor: {r: 0, g: 0.4, b: 0.4, a: 1}
   ambientScattering: 0.2
   heightScattering: 0.2

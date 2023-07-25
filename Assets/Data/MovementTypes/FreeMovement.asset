@@ -39,7 +39,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxForce: 5
   forceCurve:
     serializedVersion: 2
     m_Curve:
@@ -64,11 +63,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  timeToReachMaxForce: 5
   maxSpeed: 20
-  horizontalMultiplier: 1
-  verticalMultiplier: 1
-  weight: 0.5
+  forceBuildUpSpeed: 1
+  weight: 0.75
   rollMaxAngle: 35
   pitchMaxAngle: 33
   rollTorque: 0.01
