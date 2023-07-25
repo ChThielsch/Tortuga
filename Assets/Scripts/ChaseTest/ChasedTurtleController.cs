@@ -22,14 +22,14 @@ public class ChasedTurtleController : MonoBehaviour
     [Divider("Parameters")]
 
     [Header("Side Move [A|D]")]
-    [Range(0, 4)] public float maxSideDistance=3;
+    [Range(0, 6)] public float maxSideDistance=3;
     [Range(0, 15)] public float sideMoveSpeed=8;
     [ShowOnly] [SerializeField] private float movementStrengthY;
     [ShowOnly] [SerializeField] private float movementStrengthX;
 
     [Header("Advance [Space]")]
-    [Range(1, 7)] public float maxAdvanceDistance = 5;
-    [Range(1, 7)] public float maxBehindDistance = 5;
+    [Range(1, 12)] public float maxAdvanceDistance = 5;
+    [Range(1, 12)] public float maxBehindDistance = 5;
     [Space]
     [Range(0, 5)] public float advancePushPower =2;
     [Range(0, 5)] public float advancePushDuration = 1;
@@ -42,7 +42,7 @@ public class ChasedTurtleController : MonoBehaviour
 
     [Divider("Stats")]
     [ShowOnly] [SerializeField] private float advancePushCooldownTimer = 0;
-    [ShowOnly] [SerializeField] private float advanceDistance;
+    [ShowOnly] [SerializeField] public float advanceDistance;
     [ShowOnly] [SerializeField] private float moveSideDistance, pushSideDistance;
     [ShowOnly] [SerializeField] private float rotationAngle;
     private void Start()
@@ -90,10 +90,8 @@ public class ChasedTurtleController : MonoBehaviour
 
         turtleAnimator.SetFloat(Constants.AnimatorRotationZ, 0, 1f, Time.deltaTime);
         turtleAnimator.SetFloat(Constants.AnimatorRotationX, movementInput.y*0.5f, 1f, Time.deltaTime);
-    }
-    private void FixedUpdate()
-    {
-        if(chase.inChase)
+
+        if (chase.inChase)
             Move(movementInput);
     }
 
@@ -101,19 +99,19 @@ public class ChasedTurtleController : MonoBehaviour
     {
         //Take Input
         float iy = input.y == 0 ? -Mathf.Sign(movementStrengthY) * 0.75f : input.y;
-        movementStrengthY = Mathf.Clamp(movementStrengthY + iy * 3 * Time.fixedDeltaTime, -1, 1);
+        movementStrengthY = Mathf.Clamp(movementStrengthY + iy * 3 * Time.deltaTime, -1, 1);
 
         float ix = -input.x<= 0 ? -Mathf.Sign(advanceDropoff) * 0.75f : -input.x;
-        movementStrengthX = Mathf.Clamp(movementStrengthX + ix * Time.fixedDeltaTime, 0, 1);
+        movementStrengthX = Mathf.Clamp(movementStrengthX + ix * Time.deltaTime, 0, 1);
 
 
         //Apply Values
-        moveSideDistance += sideMoveSpeed * Time.fixedDeltaTime * movementStrengthY;
+        moveSideDistance += sideMoveSpeed * Time.deltaTime * movementStrengthY;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);
 
         float gradualX = -input.x * advanceDrive * movementStrengthX;
         gradualX -= advanceDropoff * Mathf.Max(1, advanceDistance / maxAdvanceDistance);
-        advanceDistance += gradualX * Time.fixedDeltaTime;
+        advanceDistance += gradualX * Time.deltaTime;
         advanceDistance = Mathf.Clamp(advanceDistance, -maxBehindDistance, maxAdvanceDistance * 1.5f);
 
 
@@ -139,6 +137,11 @@ public class ChasedTurtleController : MonoBehaviour
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
 
         advancePushCooldownTimer = 0;
+    }
+    public void Collide(float strength, float duration)
+    {
+        Debug.Log("Collide");
+        Advance(-strength, duration);
     }
 
     public void Advance(float valueForward, float duration)

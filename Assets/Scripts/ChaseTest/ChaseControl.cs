@@ -18,6 +18,11 @@ public class ChaseControl : MonoBehaviour
 
     public float lerp;
 
+    public ChaseObstacle obstaclePrefab;
+    public List<ChaseObstacle> obstacles = new List<ChaseObstacle>();
+    public float obstacleCooldown;
+    float obstacleCooldownTime;
+
     private void Awake()
     {
         rail= GetComponent<SplineAnimate>();
@@ -40,6 +45,9 @@ public class ChaseControl : MonoBehaviour
     }
     public void StopChase()
     {
+        for (int i = 0; i < obstacles.Count; i++)
+            obstacles[i].Active = false;
+
         rail.Pause();
         rail.Restart(false);
         chaseTime = 0;
@@ -49,19 +57,34 @@ public class ChaseControl : MonoBehaviour
 
         Debug.Log("Stop Chase");
     }
+
     private void FixedUpdate()
     {
         if (inChase)
         {
             chaseTime += Time.fixedDeltaTime;
             lerp = rail.ElapsedTime / rail.Duration;
-            Debug.Log(lerp);
-            if (lerp == 1)
+
+            obstacleCooldownTime -= Time.deltaTime;
+            if (obstacleCooldownTime<0)
             {
-                StopChase();
-                StartChase();
+                obstacleCooldownTime = obstacleCooldown;
+                ChaseObstacle obs = GetFreeObstacle();
+                obs.Spawn();
             }
         }
+    }
+
+    ChaseObstacle GetFreeObstacle()
+    {
+        for (int i = 0; i < obstacles.Count; i++)
+        {
+            if (!obstacles[i].Active)
+                return obstacles[i];
+        }
+        ChaseObstacle obs = Instantiate(obstaclePrefab, transform.position + transform.forward * 15, Quaternion.identity, transform);
+        obstacles.Add(obs);
+        return obs;
     }
 
 }

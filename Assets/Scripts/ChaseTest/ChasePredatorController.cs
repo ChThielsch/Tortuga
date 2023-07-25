@@ -9,113 +9,119 @@ public class ChasePredatorController : MonoBehaviour
     public ChaseControl chase;
     public ChasedTurtleController prey;
 
-    [Divider("Parameters")]
 
-    [Range(0,10)] public float startBaseDistance=8;
-    [Range(0, 10)] public float endBaseDistance=6;
-    public float baseDistance => Mathf.Lerp(startBaseDistance, endBaseDistance, chase.lerp);
+    //private void Start()
+    //{
+    //    ResetPosition();
+    //    chase.OnStartChase += ResetPosition;
+    //}
 
-    //[Header("Rotation")]
-    //[Range(0, 30)] public float maxRotationAngle = 10;
-    //[Range(0, 15)] public float rotationSpeed = 5;
+    //public void ResetPosition()
+    //{
 
-    [Header("Movement")]
-    public float sideMoveSpeed;
-    public float wiggleFrequency;
-    public float catchUpFrequency;
-    public float 
-        minCatchUpDistance,
-        maxCatchUpDistance;
+    //    StopAllCoroutines();
+    //}
 
+    //private void Update()
+    //{
+    //           if (chase.inChase)
+    //        //Move();
+    //}
 
-    [Divider("Stats")]
-    [ShowOnly] [SerializeField] private float catchUpDistance;
-    [ShowOnly] [SerializeField] private float moveSideDistance;
-    [ShowOnly] [SerializeField] private float rotationAngle;
+    public float backDistance;
+    public float minDistance, maxDistance;
+    public float safeDistance;
 
-    private void Start()
-    {
-        ResetPosition();
-        chase.OnStartChase += ResetPosition;
-    }
+    public Vector2 speedAdjust;
+    public float turtlePositionUpdateCooldown;
+    float tpupdateTime;
 
-    public void ResetPosition()
-    {
-        catchUpDistance = 0;
-        moveSideDistance = 0;
-        rotationAngle = 0;
-        attackCooldownTime = attackCooldown;
-        prototype_AttackIndicator.SetActive(false);
+    public float advanceFrequencyMajor;
+    public float advanceFrequencyMinor;
+    public float safetyLerpFrequency;
+    [ShowOnly] public float advanceLerpMinor;
+    [ShowOnly] public float advanceLerpMajor;
+    [ShowOnly] public float safetyLerp;
 
-        StopAllCoroutines();
+    float
+    minorSine,
+    majorSine,
+    safetySine,
+    frequency;
 
-        transform.localPosition = Vector3.back * baseDistance + Vector3.zero;
-    }
+    Vector3
+        lastTurtlePos,
+        lastTargetPos;
 
-    private void FixedUpdate()
-    {
-        if (chase.inChase)
-            Move();
-    }
+    public bool inAbility;
 
-    public void Move()
-    {
-        if (inAttack) return;
+    public float biteDistance;
+    public float biteCooldown;
+    float biteCooldownTime;
 
-        float turtleDistance = prey.transform.localPosition.x - transform.localPosition.x;
-        float sideDistance = Mathf.Sign(turtleDistance) * sideMoveSpeed * Time.fixedDeltaTime;
-        if (Mathf.Abs(sideDistance) > Mathf.Abs(turtleDistance)) sideDistance = turtleDistance;
-        moveSideDistance += sideDistance;
+    //public void Move()
+    //{
 
-        catchUpDistance =
-            (Mathf.Sin(chase.chaseTime * catchUpFrequency) + 1) * 0.5f *
-            Mathf.Lerp(minCatchUpDistance,maxCatchUpDistance,(Mathf.Sin(chase.chaseTime * catchUpFrequency*0.66f) + 1) * 0.5f );
+    //    if (inAbility)
+    //    {
+    //        //Pos right behind Turtle.
+    //        //Lerp between local base distance and turtle- security distance.
 
-        Vector3 sidePosition = Vector3.right * Mathf.Lerp(moveSideDistance-1f, moveSideDistance+1f,(Mathf.Sin(chase.chaseTime*wiggleFrequency)+1)*0.5f);
-        Vector3 advancePosition = Vector3.forward * catchUpDistance;
+    //        tpupdateTime -= Time.deltaTime;
+    //        if (tpupdateTime < 0)
+    //        {
+    //            tpupdateTime = turtlePositionUpdateCooldown;
+    //            lastTurtlePos = prey.transform.localPosition;
+    //        }
 
-        Vector3 position = sidePosition + advancePosition;
-        transform.localPosition = Vector3.back * baseDistance + position;
+    //        advanceLerpMinor += Time.deltaTime * advanceFrequencyMinor;
+    //        advanceLerpMajor += Time.deltaTime * advanceFrequencyMajor;
+    //        safetyLerp += Time.deltaTime * safetyLerpFrequency;
 
-        attackCooldownTime -= Time.fixedDeltaTime;
-        if (attackCooldownTime <= 0)
-        {
-            //Not working
-        }
-    }
-    [SerializeField] GameObject prototype_AttackIndicator;
-    public float attackCooldown=5;
-    float attackCooldownTime=5;
-    public float attackDistance=4;
-    public float attackSpeed = 2;
-    public AnimationCurve attackCurve;
-    bool inAttack;
-    private IEnumerator Attack_Execute()
-    {
-        inAttack = true;
-        prototype_AttackIndicator.SetActive(true);
+    //        minorSine = ((Mathf.Sin(advanceLerpMinor) + 1) / 2);
+    //        majorSine = ((Mathf.Sin(advanceLerpMajor) + 1) / 2);
+    //        safetySine = 0.25f + ((Mathf.Sin(safetyLerp) + 1) / 4);
+    //        frequency = majorSine * (0.75f + 0.25f * minorSine);
 
-        yield return new WaitForSeconds(1);
+    //        Vector3 backVec =
+    //            lastTurtlePos.x * Vector3.right +
+    //            Vector3.back * backDistance;
+    //        Vector3 frontVec =
+    //            lastTurtlePos +
+    //            Vector3.back * safeDistance * safetySine;
 
-        float startDistance = catchUpDistance;
-        float i = 0;
-        while (i <= 1)
-        {
-            catchUpDistance = Mathf.Lerp(startDistance, attackDistance, attackCurve.Evaluate(i));
+    //        Vector3 pos = Vector3.Lerp(backVec, frontVec, frequency);
+    //        pos.z = Mathf.Max(minDistance, Mathf.Min(pos.z, maxDistance));
+    //        lastTargetPos = pos;
+    //    }
+        
+    //    Vector3 dir= lastTargetPos - transform.localPosition;
+    //    dir.x = Mathf.Min(dir.x, speedAdjust.x);
+    //    dir.z = Mathf.Min(dir.z, speedAdjust.y);
 
-            transform.localPosition = Vector3.back * baseDistance
-                +Vector3.right*moveSideDistance
-                +Vector3.forward*catchUpDistance;
+    //    Debug.DrawRay(transform.position, dir, Color.green);
+    //    Debug.DrawRay(transform.parent.position, lastTargetPos, Color.blue);
 
-            i += attackSpeed * Time.deltaTime;
+    //    transform.localPosition += dir*Time.deltaTime;
 
-            yield return null;
-        }
-        prototype_AttackIndicator.SetActive(false);
+    //    //Special Moves
+    //    //Bite: Happens if turtle is coming closer than security distance
+    //    //Stay there for a sec and play bite anim. Dash a little bit before falling back.
+    //    biteCooldownTime -= Time.deltaTime;
+    //    if (!inAbility&&biteCooldownTime<0&&(prey.transform.position-transform.position).magnitude<=biteDistance)
+    //    {
+    //        biteCooldownTime = biteCooldown;
+    //        StartCoroutine(Attack_Execute());
+    //    }
 
-        attackCooldownTime = Random.Range(attackCooldown * 0.75f, attackCooldown * 1.25f);
-        inAttack = false;
-    }
+    //    //Dash: Cooldown goes faster the more advance turtle has.
+    //    //Stay constant for 0.5sec and save current securitydistance+Position. Then Dash there.
+    //}
+
+    //private IEnumerator Attack_Execute()
+    //{
+    //    yield return null;
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
