@@ -169,6 +169,7 @@ public class ChasedTurtleController : MonoBehaviour
             pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin));
 
         pushValue *= cooldownForce;
+        pushValue*= obstaclePushForceMultiplier;
 
         Advance(pushValue, advancePushDuration*obstaclePushDurationMultiplier);
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
@@ -192,7 +193,6 @@ public class ChasedTurtleController : MonoBehaviour
         while (time < duration)
         {
             float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
-            forwardValue *= obstaclePushForceMultiplier;
 
             advanceDistance +=forwardValue;
 
