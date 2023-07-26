@@ -46,14 +46,47 @@ public class ChasedTurtleController : MonoBehaviour
     [ShowOnly] [SerializeField] private float moveSideDistance, pushSideDistance;
     [ShowOnly] [SerializeField] private float rotationAngle;
 
-    [ShowOnly]public float obstaclePushMultiplier;
+    public List<ChaseObstacle> obstacles= new List<ChaseObstacle>();
+
+    [ShowOnly]
+    [SerializeField]
+    float
+        lastforcem,
+        lastdurationm;
+    float obstaclePushForceMultiplier
+    {
+        get
+        {
+            if (obstacles.Count == 0) return 1;
+
+            float value = 0;
+            foreach (ChaseObstacle o in obstacles)
+                value += o.pushForceMultiplier;
+            value /= Mathf.Max(1, obstacles.Count);
+            lastforcem = value;
+            return value;
+        }
+    }
+    float obstaclePushDurationMultiplier
+    {
+        get
+        {
+            if (obstacles.Count == 0) return 1;
+
+            float value = 0;
+            foreach (ChaseObstacle o in obstacles)
+                value += o.pushDurationMultiplier;
+            value /= Mathf.Max(1, obstacles.Count);
+            lastdurationm = value;
+            return value;
+        }
+    }
 
     private void Start()
     {
         InitiateInput();
         ResetPosition();
         chase.OnStartChase += ResetPosition;
-        obstaclePushMultiplier = 1;
     }
     private void InitiateInput()
     {
@@ -136,9 +169,8 @@ public class ChasedTurtleController : MonoBehaviour
             pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin));
 
         pushValue *= cooldownForce;
-        pushValue *= obstaclePushMultiplier;
 
-        Advance(pushValue, advancePushDuration);
+        Advance(pushValue, advancePushDuration*obstaclePushDurationMultiplier);
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
 
         advancePushCooldownTimer = 0;
@@ -160,8 +192,9 @@ public class ChasedTurtleController : MonoBehaviour
         while (time < duration)
         {
             float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
+            forwardValue *= obstaclePushForceMultiplier;
 
-            advanceDistance+=forwardValue;
+            advanceDistance +=forwardValue;
 
             yield return null;
             time += Time.deltaTime;

@@ -93,6 +93,16 @@ PrefabInstance:
       propertyPath: pushMultiplier
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: pushForceMultiplier
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: pushDurationMultiplier
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: 4426998441116976610, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
       propertyPath: m_Name

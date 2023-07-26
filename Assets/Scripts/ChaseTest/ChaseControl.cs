@@ -18,15 +18,6 @@ public class ChaseControl : MonoBehaviour
 
     public float lerp;
 
-    public ChaseObstacle obstaclePrefabBase;
-    public ChaseObstacle obstaclePrefabRare1;
-    [Range(0,0.5f)]public float rare1Probability;
-    public ChaseObstacle obstaclePrefabRare2;
-    [Range(0, 0.5f)] public float rare2Probability;
-
-    public List<ChaseObstacle> obstacles = new List<ChaseObstacle>();
-    public float obstacleCooldown;
-    float obstacleCooldownTime;
 
     private void Awake()
     {
@@ -50,9 +41,6 @@ public class ChaseControl : MonoBehaviour
     }
     public void StopChase()
     {
-        for (int i = 0; i < obstacles.Count; i++)
-            obstacles[i].Active = false;
-
         rail.Pause();
         rail.Restart(false);
         chaseTime = 0;
@@ -69,34 +57,6 @@ public class ChaseControl : MonoBehaviour
         {
             chaseTime += Time.fixedDeltaTime;
             lerp = rail.ElapsedTime / rail.Duration;
-
-            obstacleCooldownTime -= Time.deltaTime;
-            if (obstacleCooldownTime<0)
-            {
-                obstacleCooldownTime = obstacleCooldown;
-                ChaseObstacle obs = GetFreeObstacle();
-                obs.Spawn();
-            }
         }
     }
-
-    ChaseObstacle GetFreeObstacle()
-    {
-        for (int i = 0; i < obstacles.Count; i++)
-        {
-            if (!obstacles[i].Active)
-                return obstacles[i];
-        }
-
-        ChaseObstacle prefab = obstaclePrefabBase;
-        float roll = Random.value;
-        if (roll < rare1Probability) prefab = obstaclePrefabRare1;
-        else roll -= rare1Probability;
-        if (roll < rare2Probability) prefab = obstaclePrefabRare2;
-
-        ChaseObstacle obs = Instantiate(prefab, transform.position + transform.forward * 15, Quaternion.identity, transform);
-        obstacles.Add(obs);
-        return obs;
-    }
-
 }

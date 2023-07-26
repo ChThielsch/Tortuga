@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: bd2312b2e3b7b5b49aa3932146c137dd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - chase: {instanceID: 0}
+  - obstaclePrefabBase: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+      type: 3}
+  - obstaclePrefabRare1: {fileID: 5102653268055765235, guid: b9e913d341390b8499e7877d33f9915b,
+      type: 3}
+  - obstaclePrefabRare2: {fileID: 7452754524331290082, guid: 322fea087e25b9349b1ce079e183672c,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

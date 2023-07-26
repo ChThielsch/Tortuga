@@ -48,9 +48,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  pushMultiplier: 0.25
-  dragStrength: 1
+  pushForceMultiplier: 0.5
+  pushDurationMultiplier: 0.5
   cancelCoroutines: 0
+  dragStrength: 0.25
 --- !u!33 &3253241689700051777
 MeshFilter:
   m_ObjectHideFlags: 0
