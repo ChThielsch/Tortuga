@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChaseObstacleSoft : ChaseObstacle
 {
     public float dragStrength;
+    public bool cancelCoroutines;
     protected override void Update()
     {
         base.Update();
@@ -21,6 +22,8 @@ public class ChaseObstacleSoft : ChaseObstacle
         if (turtle)
         {
             controller = turtle;
+            if(cancelCoroutines)
+                controller.StopAllCoroutines();
         }
         ChaseDeathWall death = other.GetComponent<ChaseDeathWall>();
         if (death)

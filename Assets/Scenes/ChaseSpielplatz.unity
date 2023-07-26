@@ -3857,7 +3857,7 @@ MonoBehaviour:
     type: 3}
   obstaclePrefabRare1: {fileID: 5102653268055765235, guid: b9e913d341390b8499e7877d33f9915b,
     type: 3}
-  rare1Probability: 0.2
+  rare1Probability: 0.3
   obstaclePrefabRare2: {fileID: 7452754524331290082, guid: 322fea087e25b9349b1ce079e183672c,
     type: 3}
   rare2Probability: 0.1
@@ -5462,9 +5462,9 @@ MonoBehaviour:
   sideMoveSpeed: 5
   movementStrengthY: 0
   movementStrengthX: 0
-  maxAdvanceDistance: 12
+  maxAdvanceDistance: 8.5
   maxBehindDistance: 12
-  advancePushPower: 0.1
+  advancePushPower: 0.075
   advancePushDuration: 2
   advancePushCurve:
     serializedVersion: 2

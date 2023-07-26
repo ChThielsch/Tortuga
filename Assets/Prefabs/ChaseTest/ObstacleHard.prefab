@@ -20,6 +20,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2938328701419978033, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938328701419978033, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938328701419978033, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -70,6 +80,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
+      propertyPath: speed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
       propertyPath: dragStrength
       value: 5
       objectReference: {fileID: 0}
@@ -77,6 +92,11 @@ PrefabInstance:
         type: 3}
       propertyPath: pushMultiplier
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: cancelCoroutines
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4426998441116976610, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
