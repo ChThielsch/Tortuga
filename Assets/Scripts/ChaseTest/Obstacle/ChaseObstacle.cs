@@ -14,7 +14,9 @@ public class ChaseObstacle : MonoBehaviour
         }
     }
     public float speed;
-    public float pushForceMultiplier, pushDurationMultiplier, pushBoostMultiplier;
+    public float pushForceMultiplier, pushDurationMultiplier, pushBoostMultiplier, sideSpeedMultiplier;
+    public float dragStrength;
+
     public bool cancelCoroutines;
 
     protected ChasedTurtleController controller;
@@ -35,6 +37,9 @@ public class ChaseObstacle : MonoBehaviour
     protected virtual void Update()
     {
         transform.localPosition += Vector3.back * speed * Time.deltaTime;
+
+        if (controller)
+            controller.advanceDistance -= dragStrength * Time.deltaTime;
     }
 
     protected virtual void OnTriggerEnter(Collider other)

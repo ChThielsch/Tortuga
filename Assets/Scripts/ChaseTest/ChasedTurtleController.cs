@@ -95,6 +95,20 @@ public class ChasedTurtleController : MonoBehaviour
             return value;
         }
     }
+    float obstacleSideSpeedMultiplier
+    {
+        get
+        {
+            if (obstacles.Count == 0) return 1;
+
+            float value = 0;
+            foreach (ChaseObstacle o in obstacles)
+                value += o.sideSpeedMultiplier;
+            value /= Mathf.Max(1, obstacles.Count);
+            lastdurationm = value;
+            return value;
+        }
+    }
 
     private void Start()
     {
@@ -150,14 +164,14 @@ public class ChasedTurtleController : MonoBehaviour
     {
         //Take Input
         float iy = input.y == 0 ? -Mathf.Sign(movementStrengthY) * 0.75f : input.y;
-        movementStrengthY = Mathf.Clamp(movementStrengthY + iy * 3 * Time.deltaTime, -1, 1);
+        movementStrengthY = Mathf.Clamp(movementStrengthY + iy * 2 * Time.deltaTime, -1, 1);
 
         float ix = -input.x<= 0 ? -Mathf.Sign(advanceDropoff) * 0.75f : -input.x;
         movementStrengthX = Mathf.Clamp(movementStrengthX + ix * Time.deltaTime, 0, 1);
 
 
         //Apply Values
-        moveSideDistance += sideMoveSpeed * Time.deltaTime * movementStrengthY;
+        moveSideDistance += sideMoveSpeed * Time.deltaTime * movementStrengthY*obstacleSideSpeedMultiplier;
         moveSideDistance = Mathf.Clamp(moveSideDistance, -maxSideDistance, maxSideDistance);
 
         float gradualX = -input.x * advanceDrive * movementStrengthX;

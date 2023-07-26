@@ -10,6 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2246099926032563039, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2246099926032563039, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 853d20181ae88ba47b1084b10a15569b, type: 2}
@@ -107,6 +112,11 @@ PrefabInstance:
         type: 3}
       propertyPath: pushForceMultiplier
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: sideSpeedMultiplier
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}

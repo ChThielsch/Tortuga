@@ -372,8 +372,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63849351}
-  m_LocalRotation: {x: 0.7067227, y: -0.02356276, z: 0.023563314, w: 0.7067055}
-  m_LocalPosition: {x: -1.37777, y: 5, z: -23.752901}
+  m_LocalRotation: {x: 0.70701987, y: 0.011090755, z: -0.011090786, w: 0.70701975}
+  m_LocalPosition: {x: 4, y: -9.9999695, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1730,7 +1730,7 @@ MonoBehaviour:
   - {fileID: 233651465}
   - {fileID: 5581885297812521397}
   - {fileID: 5961460319022946163}
-  obstacleCooldown: 2
+  obstacleCooldown: 1
 --- !u!65 &763146639
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1929,8 +1929,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1075145753}
-  m_LocalRotation: {x: 0.000008270394, y: 0.683151, z: 0.000008840912, w: 0.7302771}
-  m_LocalPosition: {x: -1.3777618, y: 0, z: -23.753021}
+  m_LocalRotation: {x: 0.000000031058686, y: 0.71811056, z: 0.000000030099322, w: 0.69592905}
+  m_LocalPosition: {x: 4, y: -14.9999695, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4187,8 +4187,8 @@ MonoBehaviour:
     - Mode: 3
       Tension: 0.5
       m_DistanceToInterpolation:
-      - Distance: -1
-        T: -1
+      - Distance: 0
+        T: 0
       - Distance: 13.291933
         T: 0.03448276
       - Distance: 25.757313
