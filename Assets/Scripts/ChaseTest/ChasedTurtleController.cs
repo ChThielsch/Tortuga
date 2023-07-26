@@ -45,11 +45,15 @@ public class ChasedTurtleController : MonoBehaviour
     [ShowOnly] [SerializeField] public float advanceDistance;
     [ShowOnly] [SerializeField] private float moveSideDistance, pushSideDistance;
     [ShowOnly] [SerializeField] private float rotationAngle;
+
+    [ShowOnly]public float obstaclePushMultiplier;
+
     private void Start()
     {
         InitiateInput();
         ResetPosition();
         chase.OnStartChase += ResetPosition;
+        obstaclePushMultiplier = 1;
     }
     private void InitiateInput()
     {
@@ -132,6 +136,7 @@ public class ChasedTurtleController : MonoBehaviour
             pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin));
 
         pushValue *= cooldownForce;
+        pushValue *= obstaclePushMultiplier;
 
         Advance(pushValue, advancePushDuration);
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
@@ -141,6 +146,7 @@ public class ChasedTurtleController : MonoBehaviour
     public void Collide(float strength, float duration)
     {
         Debug.Log("Collide");
+        StopAllCoroutines();
         Advance(-strength, duration);
     }
 

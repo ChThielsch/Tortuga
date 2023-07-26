@@ -18,7 +18,12 @@ public class ChaseControl : MonoBehaviour
 
     public float lerp;
 
-    public ChaseObstacle obstaclePrefab;
+    public ChaseObstacle obstaclePrefabBase;
+    public ChaseObstacle obstaclePrefabRare1;
+    [Range(0,0.5f)]public float rare1Probability;
+    public ChaseObstacle obstaclePrefabRare2;
+    [Range(0, 0.5f)] public float rare2Probability;
+
     public List<ChaseObstacle> obstacles = new List<ChaseObstacle>();
     public float obstacleCooldown;
     float obstacleCooldownTime;
@@ -82,7 +87,14 @@ public class ChaseControl : MonoBehaviour
             if (!obstacles[i].Active)
                 return obstacles[i];
         }
-        ChaseObstacle obs = Instantiate(obstaclePrefab, transform.position + transform.forward * 15, Quaternion.identity, transform);
+
+        ChaseObstacle prefab = obstaclePrefabBase;
+        float roll = Random.value;
+        if (roll < rare1Probability) prefab = obstaclePrefabRare1;
+        else roll -= rare1Probability;
+        if (roll < rare2Probability) prefab = obstaclePrefabRare2;
+
+        ChaseObstacle obs = Instantiate(prefab, transform.position + transform.forward * 15, Quaternion.identity, transform);
         obstacles.Add(obs);
         return obs;
     }
