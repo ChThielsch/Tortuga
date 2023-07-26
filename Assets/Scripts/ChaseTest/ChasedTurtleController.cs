@@ -81,6 +81,20 @@ public class ChasedTurtleController : MonoBehaviour
             return value;
         }
     }
+    float obstaclePushBoostMultiplier
+    {
+        get
+        {
+            if (obstacles.Count == 0) return 1;
+
+            float value = 0;
+            foreach (ChaseObstacle o in obstacles)
+                value += o.pushBoostMultiplier;
+            value /= Mathf.Max(1, obstacles.Count);
+            lastdurationm = value;
+            return value;
+        }
+    }
 
     private void Start()
     {
@@ -169,7 +183,7 @@ public class ChasedTurtleController : MonoBehaviour
             pushValue = advancePushPower * (1 - Mathf.Abs(rotationMargin));
 
         pushValue *= cooldownForce;
-        pushValue*= obstaclePushForceMultiplier;
+        pushValue *= obstaclePushForceMultiplier;
 
         Advance(pushValue, advancePushDuration*obstaclePushDurationMultiplier);
         turtleAnimator.SetTrigger(Constants.AnimatorPush);
@@ -194,8 +208,7 @@ public class ChasedTurtleController : MonoBehaviour
         {
             float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
 
-            advanceDistance +=forwardValue;
-
+            advanceDistance +=forwardValue*obstaclePushBoostMultiplier;
             yield return null;
             time += Time.deltaTime;
         }

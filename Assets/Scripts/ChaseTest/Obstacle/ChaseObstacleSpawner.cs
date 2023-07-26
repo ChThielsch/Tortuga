@@ -42,11 +42,14 @@ public class ChaseObstacleSpawner : MonoBehaviour
 
     ChaseObstacle GetFreeObstacle()
     {
+        List<ChaseObstacle> obstacles = new List<ChaseObstacle>();
         for (int i = 0; i < obstacles.Count; i++)
         {
             if (!obstacles[i].Active)
-                return obstacles[i];
+                obstacles.Add(obstacles[i]);
         }
+        if (obstacles.Count != 0)
+            return obstacles[Random.Range(0,obstacles.Count)];
 
         ChaseObstacle prefab = obstaclePrefabBase;
         float roll = Random.value;

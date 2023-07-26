@@ -81,7 +81,7 @@ PrefabInstance:
     - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
       propertyPath: speed
-      value: 2
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}
@@ -97,6 +97,11 @@ PrefabInstance:
         type: 3}
       propertyPath: cancelCoroutines
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
+        type: 3}
+      propertyPath: pushBoostMultiplier
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 3235883489772385744, guid: 36e75463a67e9124590c0c2549b5961f,
         type: 3}

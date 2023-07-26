@@ -47,9 +47,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aeb0561671ce5b4886e092f8e7e9480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  pushForceMultiplier: 0.5
+  speed: 3
+  pushForceMultiplier: 0.8
   pushDurationMultiplier: 0.5
+  pushBoostMultiplier: 0.5
   cancelCoroutines: 0
   dragStrength: 0.25
 --- !u!33 &3253241689700051777

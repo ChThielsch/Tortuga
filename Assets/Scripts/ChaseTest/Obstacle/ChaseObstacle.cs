@@ -14,7 +14,7 @@ public class ChaseObstacle : MonoBehaviour
         }
     }
     public float speed;
-    public float pushForceMultiplier, pushDurationMultiplier;
+    public float pushForceMultiplier, pushDurationMultiplier, pushBoostMultiplier;
     public bool cancelCoroutines;
 
     protected ChasedTurtleController controller;
@@ -48,9 +48,11 @@ public class ChaseObstacle : MonoBehaviour
                 controller.StopAllCoroutines();
             controller.obstacles.Add(this);
         }
-        ChaseDeathWall death = other.GetComponent<ChaseDeathWall>();
+        ChaseObstacleSpawner death = other.GetComponent<ChaseObstacleSpawner>();
         if (death)
         {
+            if (controller) controller.obstacles.Remove(this);
+            controller = null;
             Active = false;
         }
     }
