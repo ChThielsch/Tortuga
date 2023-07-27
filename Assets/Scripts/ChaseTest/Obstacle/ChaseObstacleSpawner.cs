@@ -18,9 +18,10 @@ public class ChaseObstacleSpawner : MonoBehaviour
 
     private void Start()
     {
-        chase.OnEndChase += OnStopChase;
+        chase.OnEndChase += OnDeactivateAll;
+        chase.OnStartChase += OnDeactivateAll;
     }
-    public void OnStopChase()
+    public void OnDeactivateAll()
     {
         for (int i = 0; i < obstacles.Count; i++)
             obstacles[i].Active = false;

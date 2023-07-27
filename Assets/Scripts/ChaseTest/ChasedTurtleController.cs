@@ -222,7 +222,7 @@ public class ChasedTurtleController : MonoBehaviour
         {
             float forwardValue = advancePushCurve.Evaluate(time / duration) * valueForward;
 
-            advanceDistance +=forwardValue*obstaclePushBoostMultiplier;
+            advanceDistance +=forwardValue*obstaclePushBoostMultiplier* Time.deltaTime;
             yield return null;
             time += Time.deltaTime;
         }
