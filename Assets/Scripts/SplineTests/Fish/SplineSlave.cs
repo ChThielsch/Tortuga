@@ -1,115 +1,183 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
 using UnityEngine.Splines;
+using UnityEditor;
 
+[RequireComponent(typeof(SplineContainer))]
 public class SplineSlave : MonoBehaviour
 {
-    public SplineContainer spline;
-    private SplineAnimate lure;
+    [HideInInspector]public SplineSlavePrefab prefab;
 
-    [Header("Movement")]
-    [Range(0, 1)] public float startOffset;
-    public float movementSpeed = 1;
-    public Vector2 excentricityForce = Vector2.one;
-    public Vector2 excentricitySpeed = Vector2.one;
+    SplineContainer spline;
+    SplineAnimate lure;
+    Transform hook;
+    SplineSlavePrefab slave;
 
-    [Header("Progress")]
-    public float progress_readonly;
-    public float Progress
-    {
-        get
-        {
-            // Calculate the progress as a ratio of elapsed time to duration
-            if (lure != null)
-            {
-                return lure.ElapsedTime / lure.Duration;
-            }
+    [Divider("Settings")]
+    public bool playOnAwake;
 
-            return 0;
-        }
-        set
-        {
-            // Set the elapsed time based on the desired progress value
-            if (lure != null)
-            {
-                lure.ElapsedTime = lure.Duration * value;
-            }
-        }
-    }
+    [Header("Lure")]
+    [SerializeField][Range(0,1)] float startPathOffset;
+
+    [Range(0,5)] public float moveSpeed;
+    public AnimationCurve speedOffsetCurve;
+    [Range(0, 1)] public float speedOffsetSpeed;
+    [Range(0, 5)] public float speedOffsetValue;
+
+    [Header("Hook")]
+    public AnimationCurve XoffsetCurve;
+    [Range(0, 1)] public float XoffsetSpeed;
+    [Range(0, 3f)] public float XoffsetDistance;
+    public AnimationCurve YoffsetCurve;
+    [Range(0, 1)] public float YoffsetSpeed;
+    [Range(0, 3f)] public float YoffsetDistance;
+    public AnimationCurve ZoffsetCurve;
+    [Range(0, 1)] public float ZoffsetSpeed;
+    [Range(0, 1.5f)] public float ZoffsetDistance;
+
+    [Header("Status")]
+    [ShowOnly]bool isPlaying;
+    float 
+        travelTime,
+        loopTime,
+        elapsedLoopTime;
+
+
 
     private void Awake()
     {
-        // Get the SplineAnimate component attached to this GameObject
-        lure = GetComponent<SplineAnimate>();
-
-        // Create a new SplineAnimate component and assign it to lure variable
-        lure = CreateLure();
-
-        // Start playing the animation
-        lure.Play();
-    }
-
-    private void Update()
-    {
-        // Get the target position and rotation
-        (Vector3 position, Quaternion rotation) targetTrans = GetTargetTrans();
-
-        // Update the position of this GameObject
-        transform.position = targetTrans.position;
-
-        // Update the readonly progress value
-        progress_readonly = Progress;
-
-        // Update the rotation of this GameObject
-        transform.rotation = targetTrans.rotation;
-    }
-
-    public (Vector3 position, Quaternion rotation) GetTargetTrans()
-    {
-        // Initialize position, nextPosition, and rotation variables
-        Vector3 position = transform.position;
-        Vector3 nextPosition = transform.position + transform.forward * Time.deltaTime;
-        Quaternion rotation = transform.rotation;
-
-        if (lure != null)
+        if (prefab == null)
         {
-            // Update position and nextPosition based on spline animation
-            position = lure.transform.position;
-            nextPosition = lure.transform.position + lure.transform.forward * Time.deltaTime;
+            Debug.LogError("NullReferenceException: Unassigned SplineSlavePrefab on "+name+". \nDid you mayhaps forget to assign it?");
+            return;
+        }
+        spline = GetComponent<SplineContainer>();
+        
+        SetUp();
 
-            // Apply excentricity forces to create movement variations
-            position += Vector3.up * excentricityForce.y * Mathf.Sin(Time.time * excentricitySpeed.y);
-            position += Vector3.right * excentricityForce.x * Mathf.Sin(Time.time * excentricitySpeed.x);
+        if (playOnAwake) Play();
+    }
+    private void Start()
+    {
+        loopTime = lure.Duration;
+        elapsedLoopTime = startPathOffset*loopTime;
+    }
+    private void FixedUpdate()
+    {
+        if (isPlaying)
+        {
+            travelTime += Time.fixedDeltaTime;
+            AnimateLure();
+            AnimateHook();
+        }
+    }
 
-            nextPosition += Vector3.up * excentricityForce.y * Mathf.Sin((Time.time + Time.deltaTime) * excentricitySpeed.y);
-            nextPosition += Vector3.right * excentricityForce.x * Mathf.Sin((Time.time + Time.deltaTime) * excentricitySpeed.x);
+    public void SetUp()
+    {
+        GameObject lureObj = Instantiate(new GameObject("Lure"), transform);
+        hook = Instantiate(new GameObject("Hook"), lureObj.transform).transform;
 
-            // Calculate the rotation towards the nextPosition
-            rotation = Quaternion.LookRotation(nextPosition - position);
-            rotation = Quaternion.Slerp(transform.rotation, rotation, 0.8f);
+        lure = lureObj.AddComponent<SplineAnimate>();
+        lure.Container = spline;
+        lure.PlayOnAwake = false;
+        lure.StartOffset = 0;
+        lure.AnimationMethod = SplineAnimate.Method.Speed;
+        lure.MaxSpeed = 1;
+
+        slave = Instantiate(prefab, hook.position, hook.rotation, hook);
+    }
+    public void AnimateLure()
+    {
+        elapsedLoopTime += (moveSpeed + speedOffsetCurve.Evaluate(travelTime * speedOffsetSpeed) * speedOffsetValue) * Time.fixedDeltaTime;
+        elapsedLoopTime %= loopTime;
+        lure.ElapsedTime = elapsedLoopTime;
+    }
+    public void AnimateHook()
+    {
+        Vector3 pos = Vector3.one;
+
+        pos.x *= XoffsetCurve.Evaluate(travelTime * XoffsetSpeed)*XoffsetDistance;
+        pos.y *= YoffsetCurve.Evaluate(travelTime * YoffsetSpeed)*YoffsetDistance;
+        pos.z *= ZoffsetCurve.Evaluate(travelTime * ZoffsetSpeed)*ZoffsetDistance;
+
+        hook.localPosition = pos;
+
+        Debug.DrawLine(lure.transform.position, hook.transform.position, Color.blue);
+    }
+
+    public void Play() //Plays
+    {
+        isPlaying = true;
+    }
+    public void Pause() //Pauses
+    {
+        isPlaying = false;
+    }
+    public void Restart(bool startPlaying=true)
+    {
+        elapsedLoopTime = 0;
+        lure.ElapsedTime = 0;
+        isPlaying = startPlaying;
+    }
+
+    public void SetSlaveProfile(SplineSlavePrefab s)
+    {
+        moveSpeed = s.moveSpeed;
+        speedOffsetCurve = s.speedOffsetCurve;
+        speedOffsetSpeed = s.speedOffsetSpeed;
+        speedOffsetValue = s.speedOffsetValue;
+ 
+        XoffsetCurve = s.XoffsetCurve;
+        XoffsetSpeed = s.YoffsetSpeed;
+        XoffsetDistance = s.XoffsetDistance;
+
+        YoffsetCurve = s.YoffsetCurve;
+        YoffsetSpeed = s.YoffsetSpeed;
+        YoffsetDistance = s.YoffsetDistance;
+
+        ZoffsetCurve = s.ZoffsetCurve;
+        ZoffsetSpeed = s.ZoffsetSpeed;
+        ZoffsetDistance = s.ZoffsetDistance;
+    }
+}
+
+[CustomEditor(typeof(SplineSlave))]
+public class SplineSlaveEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        SplineSlave splineSlave = (SplineSlave)target;
+
+        SplineSlavePrefab prefab = null;
+        prefab = (SplineSlavePrefab)EditorGUI.ObjectField(EditorGUILayout.GetControlRect(), "Prefab", splineSlave.prefab, typeof(SplineSlavePrefab), false);
+        if (prefab != splineSlave.prefab)
+        {
+            splineSlave.prefab = prefab;
+            splineSlave.SetSlaveProfile(prefab);
+        }
+        else if (GUILayout.Button("Reset Overrides"))
+        {
+            splineSlave.SetSlaveProfile(prefab);
         }
 
-        // Return the target position and rotation
-        return (position, rotation);
-    }
+        DrawDefaultInspector();
 
-    public SplineAnimate CreateLure()
-    {
-        // Create a new GameObject for the lure
-        GameObject lureObject = Instantiate(new GameObject(name + "_Lure"), spline.transform);
+        GUILayout.Space(10);
 
-        // Add a SplineAnimate component to the lure GameObject
-        SplineAnimate lure = lureObject.AddComponent<SplineAnimate>();
+        if (GUILayout.Button("Play"))
+        {
+            splineSlave.Play();
+        }
 
-        // Set the properties of the SplineAnimate component
-        lure.Container = spline;
-        lure.StartOffset = startOffset;
-        lure.AnimationMethod = SplineAnimate.Method.Speed;
-        lure.MaxSpeed = movementSpeed;
+        if (GUILayout.Button("Stop"))
+        {
+            splineSlave.Pause();
+        }
 
-        // Return the created SplineAnimate component
-        return lure;
+        if (GUILayout.Button("Restart"))
+        {
+            splineSlave.Restart();
+        }
     }
 }
