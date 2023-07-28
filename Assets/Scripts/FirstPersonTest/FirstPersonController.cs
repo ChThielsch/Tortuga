@@ -9,6 +9,7 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Mouse Look")]
     public float mouseSensitivity = 100f;
+    public float smoothRotation = 12f;
 
     [Header("Raycast Interact")]
     public float interactDistance = 2f;
@@ -54,8 +55,10 @@ public class FirstPersonController : MonoBehaviour
 
         Vector3 rbVelocity = rb.velocity;
 
-        rbVelocity.x = moveHorizontal == 0 ? moveVelocity.x : Mathf.Lerp(rb.velocity.x, moveVelocity.x, Time.deltaTime * smoothMovement);
-        rbVelocity.z = moveVertical == 0 ? moveVelocity.z : Mathf.Lerp(rb.velocity.z, moveVelocity.z, Time.deltaTime * smoothMovement);
+        rbVelocity.x = Mathf.Lerp(rb.velocity.x, moveVelocity.x, 
+            Time.deltaTime * smoothMovement* (moveHorizontal == 0 ? 2 : 1));
+        rbVelocity.z = Mathf.Lerp(rb.velocity.z, moveVelocity.z, 
+            Time.deltaTime * smoothMovement * (moveVertical == 0 ? 2 : 1));
 
         rb.velocity = rbVelocity;
     }
@@ -69,8 +72,8 @@ public class FirstPersonController : MonoBehaviour
 
         camRotX = Mathf.Clamp(camRotX + mouseY, -90, 90);
 
-        playerCameraTransform.localRotation = Quaternion.Euler(-camRotX, 0f, 0f);
-
+        playerCameraTransform.localRotation = Quaternion.Slerp(playerCameraTransform.localRotation, Quaternion.Euler(-camRotX, 0f, 0f), 
+            Time.deltaTime * smoothRotation * (mouseY == 0 ? 2 : 1));
     }
 
     private void HandleInteract()
