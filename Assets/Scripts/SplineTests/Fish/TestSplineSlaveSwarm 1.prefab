@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3216450046364567555}
   - component: {fileID: 4578630134991872146}
   m_Layer: 0
-  m_Name: TestSplineSlaveSwarm
+  m_Name: TestSplineSlaveSwarm 1
   m_TagString: Untagged
   m_Icon: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   ZoffsetSpeed: 0.1
   ZoffsetDistance: 1.293
-  agentPrefab: {fileID: 1173094384172586917, guid: 26a619c13e9133f44a88577d9e9fe7d0,
+  agentPrefab: {fileID: 1173094384172586917, guid: 7706ca320dfb85947ba25ead18963534,
     type: 3}
   swarmSize: 20
-  lureTag: 2
+  lureTag: 0

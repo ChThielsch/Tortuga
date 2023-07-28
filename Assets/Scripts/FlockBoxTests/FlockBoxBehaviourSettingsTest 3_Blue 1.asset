@@ -67,6 +67,7 @@ MonoBehaviour:
   - {fileID: 6210954037421586428}
   - {fileID: -3043250028685987601}
   - {fileID: 4654908850430009768}
+  - {fileID: 6340835164107847741}
 --- !u!114 &582906912295720287
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -156,3 +157,31 @@ MonoBehaviour:
   foldout: 1
   wanderScope: 45
   wanderIntensity: 0.1
+--- !u!114 &6340835164107847741
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16cbaa050cabba8498e4fd8da6072155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1
+  weight: 2
+  useTagFilter: 0
+  filterTags: []
+  drawDebug: 0
+  debugColor: {r: 1, g: 1, b: 1, a: 1}
+  debugDrawSteering: 0
+  debugDrawProperties: 0
+  foldout: 1
+  lookAheadSeconds: 1
+  clearance: 0
+  mask:
+    serializedVersion: 2
+    m_Bits: 64
+  visionRayDensity: 4
+  drawVisionRays: 0

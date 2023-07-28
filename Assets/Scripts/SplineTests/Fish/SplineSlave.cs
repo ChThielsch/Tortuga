@@ -11,7 +11,7 @@ public class SplineSlave : MonoBehaviour
     SplineContainer spline;
     SplineAnimate lure;
     Transform hook;
-    CloudFine.FlockBox.FlockBox box;
+    public CloudFine.FlockBox.FlockBox box;
 
     SplineSlavePrefab slave;
 
@@ -61,7 +61,6 @@ public class SplineSlave : MonoBehaviour
         spline = GetComponent<SplineContainer>();
         lure = GetComponentInChildren<SplineAnimate>();
         hook = lure.transform.GetChild(0);
-        box = GetComponentInChildren<CloudFine.FlockBox.FlockBox>();
 
         SetUp();
 

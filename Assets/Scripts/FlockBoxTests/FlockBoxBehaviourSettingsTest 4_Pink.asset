@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8205522338142438937
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16cbaa050cabba8498e4fd8da6072155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isActive: 1
+  weight: 2
+  useTagFilter: 0
+  filterTags: []
+  drawDebug: 0
+  debugColor: {r: 1, g: 1, b: 1, a: 1}
+  debugDrawSteering: 0
+  debugDrawProperties: 0
+  foldout: 1
+  lookAheadSeconds: 1
+  clearance: 0
+  mask:
+    serializedVersion: 2
+    m_Bits: 64
+  visionRayDensity: 4
+  drawVisionRays: 0
 --- !u!114 &-2073498284874778819
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -42,6 +70,7 @@ MonoBehaviour:
   - {fileID: -2073498284874778819}
   - {fileID: 3202478761336069779}
   - {fileID: 1259137531556122431}
+  - {fileID: -8205522338142438937}
 --- !u!114 &582906912295720287
 MonoBehaviour:
   m_ObjectHideFlags: 1

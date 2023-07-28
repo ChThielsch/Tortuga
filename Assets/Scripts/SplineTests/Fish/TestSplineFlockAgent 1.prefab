@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4675184808742314929}
   - component: {fileID: 1173094384172586917}
   m_Layer: 0
-  m_Name: TestSplineFlockAgent
+  m_Name: TestSplineFlockAgent 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -51,7 +51,7 @@ MonoBehaviour:
     radius: 0.25
   debugDrawShape: 0
   tagSearchableOutsideBounds: 0
-  activeSettings: {fileID: 11400000, guid: ac221e1162277b847977e190e41c448c, type: 2}
+  activeSettings: {fileID: 11400000, guid: d5ac5df9a4294ac4b9bcec5c5c22e45c, type: 2}
 --- !u!1 &4257655873463447650
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,7 +113,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0faf08228432a664cb2d46f4d1eee2b0, type: 2}
+  - {fileID: 2100000, guid: 7e6b6a154cd59634b8e06a92e338ba2c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
