@@ -8,10 +8,11 @@ using UnityEditor;
 public class SplineSlave : MonoBehaviour
 {
     [HideInInspector]public SplineSlavePrefab prefab;
-
     SplineContainer spline;
     SplineAnimate lure;
     Transform hook;
+    CloudFine.FlockBox.FlockBox box;
+
     SplineSlavePrefab slave;
 
     [Divider("Settings")]
@@ -36,6 +37,11 @@ public class SplineSlave : MonoBehaviour
     [Range(0, 1)] public float ZoffsetSpeed;
     [Range(0, 1.5f)] public float ZoffsetDistance;
 
+    [Header("Swarms")]
+    public CloudFine.FlockBox.SteeringAgent agentPrefab;
+    public int swarmSize;
+    [Range(0, 2)] public int lureTag;
+
     [Header("Status")]
     [ShowOnly]bool isPlaying;
     float 
@@ -53,7 +59,10 @@ public class SplineSlave : MonoBehaviour
             return;
         }
         spline = GetComponent<SplineContainer>();
-        
+        lure = GetComponentInChildren<SplineAnimate>();
+        hook = lure.transform.GetChild(0);
+        box = GetComponentInChildren<CloudFine.FlockBox.FlockBox>();
+
         SetUp();
 
         if (playOnAwake) Play();
@@ -75,10 +84,6 @@ public class SplineSlave : MonoBehaviour
 
     public void SetUp()
     {
-        GameObject lureObj = Instantiate(new GameObject("Lure"), transform);
-        hook = Instantiate(new GameObject("Hook"), lureObj.transform).transform;
-
-        lure = lureObj.AddComponent<SplineAnimate>();
         lure.Container = spline;
         lure.PlayOnAwake = false;
         lure.StartOffset = 0;
@@ -86,6 +91,19 @@ public class SplineSlave : MonoBehaviour
         lure.MaxSpeed = 1;
 
         slave = Instantiate(prefab, hook.position, hook.rotation, hook);
+
+        string tag = $"Lure_{lureTag}";
+        hook.tag = tag;
+
+        if (agentPrefab)
+        {
+            for (int i = 0; i < swarmSize; i++)
+            {
+                CloudFine.FlockBox.SteeringAgent a = Instantiate(agentPrefab, hook.position , Random.rotation, box.transform);
+                a.activeSettings.GetBehavior<CloudFine.FlockBox.PursuitBehavior>().filterTags = new string[] { tag };
+                a.Spawn(box, hook.position + Random.onUnitSphere,true);
+            }
+        }
     }
     public void AnimateLure()
     {
@@ -139,6 +157,10 @@ public class SplineSlave : MonoBehaviour
         ZoffsetCurve = s.ZoffsetCurve;
         ZoffsetSpeed = s.ZoffsetSpeed;
         ZoffsetDistance = s.ZoffsetDistance;
+
+        agentPrefab = s.agentPrefab;
+        swarmSize = s.swarmSize;
+        lureTag = s.lureTag;
     }
 }
 

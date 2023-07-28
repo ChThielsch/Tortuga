@@ -19,4 +19,9 @@ public class SplineSlavePrefab : MonoBehaviour
     public AnimationCurve ZoffsetCurve;
     [Range(0, 1)] public float ZoffsetSpeed;
     [Range(0, 1.5f)] public float ZoffsetDistance;
+
+    [Header("For Swarms only. Will be ignored if prefab is null.")]
+    public CloudFine.FlockBox.SteeringAgent agentPrefab;
+    public int swarmSize;
+    [Range(0,2)]public int lureTag;
 }
