@@ -11,6 +11,7 @@ TagManager:
   - Lure_0
   - Lure_1
   - Lure_2
+  - Interactable
   layers:
   - Default
   - TransparentFX
