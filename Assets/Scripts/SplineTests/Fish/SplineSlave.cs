@@ -7,7 +7,7 @@ using UnityEditor;
 [RequireComponent(typeof(SplineContainer))]
 public class SplineSlave : MonoBehaviour
 {
-    [HideInInspector]public SplineSlavePrefab prefab;
+    [HideInInspector] public SplineSlavePrefab prefab;
     SplineContainer spline;
     SplineAnimate lure;
     Transform hook;
@@ -16,30 +16,56 @@ public class SplineSlave : MonoBehaviour
     SplineSlavePrefab slave;
 
     [Divider("Settings")]
+    [Tooltip("Movement Only as SplineSlave and potential swarm members will always instantiate on awake!")]
     public bool playOnAwake;
 
     [Header("Lure")]
-    [SerializeField][Range(0,1)] float startPathOffset;
+    [Tooltip("Part of the first loop that will be skipped.")]
+    [SerializeField] [Range(0, 1)] float startPathOffset;
 
-    [Range(0,5)] public float moveSpeed;
+    [Space]
+    [Range(0, 5)] public float moveSpeed;
+    [Tooltip("Applies periodic change to Lure's speed along spline.")]
     public AnimationCurve speedOffsetCurve;
+    [Tooltip("Speed at which offset is applied.")]
     [Range(0, 1)] public float speedOffsetSpeed;
+    [Tooltip("Strength of the applied offset.")]
     [Range(0, 5)] public float speedOffsetValue;
 
+    [Space]
     [Header("Hook")]
+    [Tooltip("Applies periodic change to Hooks local X position. (left-right)")]
     public AnimationCurve XoffsetCurve;
+    [Tooltip("Speed at which offset is applied.")]
     [Range(0, 1)] public float XoffsetSpeed;
+    [Tooltip("Strength of the applied offset.")]
     [Range(0, 3f)] public float XoffsetDistance;
+
+    [Space]
+    [Tooltip("Applies periodic change to Hooks local Y position. (down-up)")]
     public AnimationCurve YoffsetCurve;
+    [Tooltip("Speed at which offset is applied.")]
     [Range(0, 1)] public float YoffsetSpeed;
+    [Tooltip("Strength of the applied offset.")]
     [Range(0, 3f)] public float YoffsetDistance;
+
+    [Space]
+    [Tooltip("Applies periodic change to Hooks local Z position. (back-forward)")]
     public AnimationCurve ZoffsetCurve;
+    [Tooltip("Speed at which offset is applied.")]
     [Range(0, 1)] public float ZoffsetSpeed;
+    [Tooltip("Strength of the applied offset." +
+        "\nHas a lower cap as higher offset here results in drifting through spline curves.")]
     [Range(0, 1.5f)] public float ZoffsetDistance;
 
     [Header("Swarms")]
+    [Tooltip("The Type of swarm member that will be instantiated in the FlockBox." +
+        "\nLeave this empty to ingore the feature.")]
     public CloudFine.FlockBox.SteeringAgent agentPrefab;
+    [Tooltip("Number of swarm members that will be instantiated")]
     public int swarmSize;
+    [Tooltip("Tag of the Hook as well as Tag the swarm will be attracted to." +
+        "\nNote that this overrides something in the swarms Behaviour ScriptableObject!")]
     [Range(0, 2)] public int lureTag;
 
     [Header("Status")]
