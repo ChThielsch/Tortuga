@@ -5246,6 +5246,7 @@ GameObject:
   - component: {fileID: 1557383677}
   - component: {fileID: 1557383676}
   - component: {fileID: 1557383675}
+  - component: {fileID: 1557383681}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -5265,16 +5266,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0f2401b7906f8446ad30efe2b83c38e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprintReference: {fileID: -2794227098231858023, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
+    type: 3}
+  lookReference: {fileID: 2850611683010421183, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
+    type: 3}
+  movementReference: {fileID: 3226285696715641167, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
+    type: 3}
+  interactReference: {fileID: 8834852665190570388, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
+    type: 3}
   normalSpeed: 3
   sprintSpeed: 5
-  smoothMovement: 5
-  mouseSensitivity: 200
-  smoothRotation: 8
+  smoothMovement: 3.5
+  movementStopMultiplier: 3.5
+  mouseSensitivity: 300
+  smoothRotation: 3
+  rotationMomentum: 0.9
   interactDistance: 3.5
+  isSprinting: 0
+  moveInput: {x: 0, y: 0}
+  lookInput: {x: 0, y: 0}
+  currentSpeed: 0
+  moveVelocity: {x: 0, y: 0, z: 0}
+  moveTargetVelocity: {x: 0, y: 0, z: 0}
+  camRotX: 0
+  currentLook: {x: 0, y: 0}
   playerCameraTransform: {fileID: 1202139330}
   hovered: {fileID: 0}
-  currentSpeed: 0
-  camRotX: 0
   interactionPrompt: {fileID: 1676081021}
 --- !u!54 &1557383676
 Rigidbody:
@@ -5392,6 +5409,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: -41.349, z: 0}
+--- !u!114 &1557383681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1557383674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
+    type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 1284696891}
 --- !u!1 &1593427967
 GameObject:
   m_ObjectHideFlags: 0

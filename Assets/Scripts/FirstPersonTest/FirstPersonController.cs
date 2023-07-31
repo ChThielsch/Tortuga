@@ -1,26 +1,48 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
 {
+    [Divider("Input")]
+    public InputActionReference sprintReference;
+    public InputActionReference lookReference;
+    public InputActionReference movementReference;
+    public InputActionReference interactReference;
+
+    [Divider("Variables")]
     [Header("Movement")]
-    public float normalSpeed = 5f;
-    public float sprintSpeed = 10f;
-    public float smoothMovement = 12f;
+    [Range(0,7)]public float normalSpeed = 3f;
+    [Range(0, 7)] public float sprintSpeed = 5f;
+    [Range(0, 30)] public float smoothMovement = 12f;
+    [Range(0, 10)] public float movementStopMultiplier = 2f;
 
     [Header("Mouse Look")]
-    public float mouseSensitivity = 100f;
-    public float smoothRotation = 12f;
+    [Range(0, 300)] public float mouseSensitivity = 5f;
+    [Range(0, 30)] public float smoothRotation = 2f;
 
     [Header("Raycast Interact")]
-    public float interactDistance = 2f;
+    [Range(0, 5)] public float interactDistance = 2f;
 
+    [Header("Status")]
+    [ShowOnly] [SerializeField] bool isSprinting;
+    [ReadOnly][SerializeField] Vector2 
+        moveInput,
+        lookInput;
+
+    [SerializeField][ShowOnly]private float currentSpeed;    
+    [ReadOnly][SerializeField]Vector3 moveVelocity = Vector3.zero;
+    [ReadOnly] [SerializeField]Vector3 moveTargetVelocity=Vector3.zero;
+
+    [SerializeField][ShowOnly]private float camRotX;
+    [ReadOnly] [SerializeField] Vector2 currentLook = Vector2.zero;
+    [ReadOnly] [SerializeField] Vector2 lookVelocity = Vector2.zero;
+
+    [Divider("Components")]
     public Transform playerCameraTransform;
 
     private Rigidbody rb;
     [ShowOnly] public Collider hovered;
-    [SerializeField][ShowOnly]private float currentSpeed;
-    [SerializeField][ShowOnly]private float camRotX;
-    private bool isSprinting;
+
 
     public TMPro.TMP_Text interactionPrompt;
 
@@ -32,6 +54,28 @@ public class FirstPersonController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         currentSpeed = normalSpeed;
         camRotX = 0;
+
+        InitiateInput();
+    }
+    private void InitiateInput()
+    {
+        sprintReference.action.started += ctx =>
+        {
+            isSprinting = true;
+        };
+
+        sprintReference.action.canceled += ctx =>
+        {
+            isSprinting = false;
+        };
+
+        interactReference.action.started += ctx =>
+        {
+            if (hovered)
+            {
+                Debug.Log("Interacted with: " + hovered.gameObject.name);
+            }
+        };
     }
 
     private void Update()
@@ -39,49 +83,41 @@ public class FirstPersonController : MonoBehaviour
         HandleMovement();
         HandleMouseLook();
         UpdateHover();
-        HandleInteract();
     }
 
     private void HandleMovement()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        moveInput = movementReference.action.ReadValue<Vector2>();
+        float moveHorizontal = -moveInput.x;
+        float moveVertical = moveInput.y;
 
-        isSprinting = Input.GetKey(KeyCode.Space);
         currentSpeed = isSprinting ? sprintSpeed : normalSpeed;
 
         Vector3 moveDirection = (transform.forward * moveVertical + transform.right * moveHorizontal).normalized;
-        Vector3 moveVelocity = moveDirection * currentSpeed;
+        moveTargetVelocity = moveDirection * currentSpeed;
 
-        Vector3 rbVelocity = rb.velocity;
-
-        rbVelocity.x = Mathf.Lerp(rb.velocity.x, moveVelocity.x, 
-            Time.deltaTime * smoothMovement* (moveHorizontal == 0 ? 2 : 1));
-        rbVelocity.z = Mathf.Lerp(rb.velocity.z, moveVelocity.z, 
-            Time.deltaTime * smoothMovement * (moveVertical == 0 ? 2 : 1));
-
-        rb.velocity = rbVelocity;
+        moveVelocity = Vector3.Lerp(moveVelocity, moveTargetVelocity, 1f / smoothMovement);
+        rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
     }
 
     private void HandleMouseLook()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        lookInput = lookReference.action.ReadValue<Vector2>();
 
-        transform.Rotate(Vector3.up * mouseX);
+        Vector3 currentRotation = transform.rotation.eulerAngles;
 
-        camRotX = Mathf.Clamp(camRotX + mouseY, -90, 90);
+        lookInput = Vector2.Scale(lookInput, Vector2.one * mouseSensitivity * Time.deltaTime);
+        float rotationSpeed = 1f / smoothRotation;
 
-        playerCameraTransform.localRotation = Quaternion.Slerp(playerCameraTransform.localRotation, Quaternion.Euler(-camRotX, 0f, 0f), 
-            Time.deltaTime * smoothRotation * (mouseY == 0 ? 2 : 1));
-    }
+        Vector2 smoothLook;
+        // the interpolated float result between the two float values
+        smoothLook.x = Mathf.Lerp(0, lookInput.x, rotationSpeed);
+        smoothLook.y = Mathf.Lerp(0, lookInput.y, rotationSpeed);
+        lookVelocity= Vector3.Lerp(lookVelocity, smoothLook, rotationSpeed);
+        currentLook += lookVelocity;
 
-    private void HandleInteract()
-    {
-        if (Input.GetKeyDown(KeyCode.E)&&hovered)
-        {
-            Debug.Log("Interacted with: " + hovered.gameObject.name);
-        }
+        playerCameraTransform.localRotation = Quaternion.AngleAxis(-currentLook.y, Vector3.right);
+        transform.localRotation = Quaternion.AngleAxis(currentLook.x, transform.up);
     }
 
     public void UpdateHover()
