@@ -10,17 +10,25 @@ public class FirstPersonController : MonoBehaviour
     public InputActionReference interactReference;
 
     [Divider("Variables")]
+    [Header("Gravity")]
+    [SerializeField] private LayerMask groundLayerMask;
+    public float fallMultiplier = 2.5f;
+    [ShowOnly][SerializeField]private bool isGrounded;
+    Vector3 groundNormal;
+
+
     [Header("Movement")]
     [Range(0,7)]public float normalSpeed = 3f;
     [Range(0, 7)] public float sprintSpeed = 5f;
     [Range(0, 30)] public float smoothMovement = 12f;
     [Range(0, 10)] public float movementStopMultiplier = 2f;
+    //[Range(0, 45)] public float maxSlopeAngle = 45f;
 
-    [Header("Mouse Look")]
-    [Range(0, 300)] public float mouseSensitivity = 5f;
-    [Range(0, 30)] public float smoothRotation = 2f;
+    [Header("Rotation")]
+    [Range(1, 1000)] public float rotationSpeed = 300;
+    [Range(0, 20)] public float smoothRotation = 2f;
 
-    [Header("Raycast Interact")]
+    [Header("Interaction")]
     [Range(0, 5)] public float interactDistance = 2f;
 
     [Header("Status")]
@@ -33,9 +41,7 @@ public class FirstPersonController : MonoBehaviour
     [ReadOnly][SerializeField]Vector3 moveVelocity = Vector3.zero;
     [ReadOnly] [SerializeField]Vector3 moveTargetVelocity=Vector3.zero;
 
-    [SerializeField][ShowOnly]private float camRotX;
-    [ReadOnly] [SerializeField] Vector2 currentLook = Vector2.zero;
-    [ReadOnly] [SerializeField] Vector2 lookVelocity = Vector2.zero;
+    [ReadOnly] [SerializeField] Vector3 currentLook = Vector3.zero;
 
     [Divider("Components")]
     public Transform playerCameraTransform;
@@ -46,6 +52,11 @@ public class FirstPersonController : MonoBehaviour
 
     public TMPro.TMP_Text interactionPrompt;
 
+    public Vector2 GetMovementInput()
+    {
+        return moveInput;
+    }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -53,7 +64,6 @@ public class FirstPersonController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         currentSpeed = normalSpeed;
-        camRotX = 0;
 
         InitiateInput();
     }
@@ -80,9 +90,21 @@ public class FirstPersonController : MonoBehaviour
 
     private void Update()
     {
+        UpdateHover();
+        UpdateGroundCheck();
+
         HandleMovement();
         HandleMouseLook();
-        UpdateHover();
+    }
+
+    private void UpdateGroundCheck()
+    {
+        float groundRaycastDistance = 1.25f;
+        RaycastHit hit;
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundRaycastDistance, groundLayerMask);
+        groundNormal = isGrounded ? hit.normal : Vector3.up;
+
+        Debug.DrawRay(transform.position, Vector3.down * groundRaycastDistance, isGrounded ? Color.green : Color.red);
     }
 
     private void HandleMovement()
@@ -94,31 +116,46 @@ public class FirstPersonController : MonoBehaviour
         currentSpeed = isSprinting ? sprintSpeed : normalSpeed;
 
         Vector3 moveDirection = (transform.forward * moveVertical + transform.right * moveHorizontal).normalized;
+
+
+        float slopeAngle= Vector3.Angle(groundNormal, Vector3.up);
+        // Apply movement modification on slopes
+        if (slopeAngle > 0f)
+        {
+            Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(groundNormal, moveDirection), groundNormal).normalized;
+            moveDirection = Vector3.ProjectOnPlane(moveDirection, groundNormal).normalized;
+        }
+
         moveTargetVelocity = moveDirection * currentSpeed;
 
         moveVelocity = Vector3.Lerp(moveVelocity, moveTargetVelocity, 1f / smoothMovement);
-        rb.velocity = new Vector3(moveVelocity.x, rb.velocity.y, moveVelocity.z);
+
+        Vector3 gravVelocity= Vector3.zero;
+        if (!isGrounded)
+        {
+            gravVelocity= Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+        }
+        Vector3 totalVelocity = moveVelocity + gravVelocity;
+
+        rb.velocity = totalVelocity;
+
+        Debug.DrawRay(transform.position, rb.velocity, Color.green);
     }
 
     private void HandleMouseLook()
     {
         lookInput = lookReference.action.ReadValue<Vector2>();
 
-        Vector3 currentRotation = transform.rotation.eulerAngles;
-
-        lookInput = Vector2.Scale(lookInput, Vector2.one * mouseSensitivity * Time.deltaTime);
-        float rotationSpeed = 1f / smoothRotation;
-
-        Vector2 smoothLook;
-        // the interpolated float result between the two float values
-        smoothLook.x = Mathf.Lerp(0, lookInput.x, rotationSpeed);
-        smoothLook.y = Mathf.Lerp(0, lookInput.y, rotationSpeed);
-        lookVelocity= Vector3.Lerp(lookVelocity, smoothLook, rotationSpeed);
-        currentLook += lookVelocity;
+        Vector3 vel = currentLook;
+        vel.x= lookInput.x;
+        vel.y= lookInput.y;
+        vel *= Time.deltaTime*rotationSpeed;
+        currentLook = Vector3.Slerp(currentLook, currentLook+vel, .1f);
 
         playerCameraTransform.localRotation = Quaternion.AngleAxis(-currentLook.y, Vector3.right);
         transform.localRotation = Quaternion.AngleAxis(currentLook.x, transform.up);
     }
+
 
     public void UpdateHover()
     {
