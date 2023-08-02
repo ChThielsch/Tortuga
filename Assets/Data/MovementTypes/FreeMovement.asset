@@ -64,9 +64,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   maxSpeed: 20
-  forceBuildUpSpeed: 1
-  accelerationSmoothingFactor: 0.1
-  decelerationSmoothingFactor: 0.5
+  accelerationFactor: 0.1
+  decelerationFactor: 5
   weight: 0.75
   rollMaxAngle: 35
   pitchMaxAngle: 33
