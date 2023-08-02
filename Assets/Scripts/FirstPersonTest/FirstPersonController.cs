@@ -22,10 +22,10 @@ public class FirstPersonController : MonoBehaviour
     [Range(0, 7)] public float sprintSpeed = 5f;
     [Range(0, 30)] public float smoothMovement = 12f;
     [Range(0, 10)] public float movementStopMultiplier = 2f;
-    //[Range(0, 45)] public float maxSlopeAngle = 45f;
 
     [Header("Rotation")]
-    [Range(1, 1000)] public float rotationSpeed = 300;
+    [Range(1, 1500)] public float rotationSpeed = 1000;
+    [Range(1, 1500)] public float sprintRotationSpeed = 1500f;
     [Range(0, 20)] public float smoothRotation = 2f;
 
     [Header("Interaction")]
@@ -37,7 +37,6 @@ public class FirstPersonController : MonoBehaviour
         moveInput,
         lookInput;
 
-    [SerializeField][ShowOnly]private float currentSpeed;    
     [ReadOnly][SerializeField]Vector3 moveVelocity = Vector3.zero;
     [ReadOnly] [SerializeField]Vector3 moveTargetVelocity=Vector3.zero;
 
@@ -63,7 +62,6 @@ public class FirstPersonController : MonoBehaviour
         Cursor.visible = false;
 
         rb = GetComponent<Rigidbody>();
-        currentSpeed = normalSpeed;
 
         InitiateInput();
     }
@@ -113,8 +111,6 @@ public class FirstPersonController : MonoBehaviour
         float moveHorizontal = -moveInput.x;
         float moveVertical = moveInput.y;
 
-        currentSpeed = isSprinting ? sprintSpeed : normalSpeed;
-
         Vector3 moveDirection = (transform.forward * moveVertical + transform.right * moveHorizontal).normalized;
 
 
@@ -126,7 +122,7 @@ public class FirstPersonController : MonoBehaviour
             moveDirection = Vector3.ProjectOnPlane(moveDirection, groundNormal).normalized;
         }
 
-        moveTargetVelocity = moveDirection * currentSpeed;
+        moveTargetVelocity = moveDirection * (isSprinting ? sprintSpeed : normalSpeed);
 
         moveVelocity = Vector3.Lerp(moveVelocity, moveTargetVelocity, 1f / smoothMovement);
 
@@ -149,7 +145,7 @@ public class FirstPersonController : MonoBehaviour
         Vector3 vel = currentLook;
         vel.x= lookInput.x;
         vel.y= lookInput.y;
-        vel *= Time.deltaTime*rotationSpeed;
+        vel *= Time.deltaTime * (isSprinting ? sprintRotationSpeed : rotationSpeed);
         currentLook = Vector3.Slerp(currentLook, currentLook+vel, .1f);
 
         playerCameraTransform.localRotation = Quaternion.AngleAxis(-currentLook.y, Vector3.right);
