@@ -24,6 +24,7 @@ public class FirstPersonController : MonoBehaviour
     [Range(0, 10)] public float movementStopMultiplier = 2f;
 
     [Header("Rotation")]
+    //We need seperate speeds for different control schemes once those are implemented bc these are way to high for mouse.
     [Range(1, 1500)] public float rotationSpeed = 1000;
     [Range(1, 1500)] public float sprintRotationSpeed = 1500f;
     [Range(0, 20)] public float smoothRotation = 2f;
@@ -46,7 +47,7 @@ public class FirstPersonController : MonoBehaviour
     public Transform playerCameraTransform;
 
     private Rigidbody rb;
-    [ShowOnly] public Collider hovered;
+    [ShowOnly] public IInteractable hovered;
 
 
     public TMPro.TMP_Text interactionPrompt;
@@ -79,9 +80,15 @@ public class FirstPersonController : MonoBehaviour
 
         interactReference.action.started += ctx =>
         {
-            if (hovered)
+            if (hovered!=null)
             {
-                Debug.Log("Interacted with: " + hovered.gameObject.name);
+                if (hovered.isBlocked())
+                    Debug.Log("Can't Interacted with: " + hovered.name);
+                else
+                {
+                    Debug.Log("Interacted with: " + hovered.name);
+                    hovered.OnInteract();
+                }
             }
         };
     }
@@ -127,17 +134,14 @@ public class FirstPersonController : MonoBehaviour
         moveVelocity = Vector3.Lerp(moveVelocity, moveTargetVelocity, 1f / smoothMovement);
 
         Vector3 gravVelocity= Vector3.zero;
-        if (!isGrounded)
-        {
+
             gravVelocity= Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        }
         Vector3 totalVelocity = moveVelocity + gravVelocity;
 
         rb.velocity = totalVelocity;
 
         Debug.DrawRay(transform.position, rb.velocity, Color.green);
     }
-
     private void HandleMouseLook()
     {
         lookInput = lookReference.action.ReadValue<Vector2>();
@@ -152,19 +156,23 @@ public class FirstPersonController : MonoBehaviour
         transform.localRotation = Quaternion.AngleAxis(currentLook.x, transform.up);
     }
 
-
     public void UpdateHover()
     {
         RaycastHit hit;
         hovered = null;
         if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, interactDistance))
         {
-            if (hit.collider.CompareTag("Interactable"))
+            IInteractable interactable= hit.collider.GetComponent<IInteractable>();
+            if (interactable!=null)
             {
-                hovered = hit.collider;
+                hovered = interactable;
             }
-        }
-        interactionPrompt.text = hovered?hovered.name:"";
-        Debug.DrawRay(playerCameraTransform.position,playerCameraTransform.forward*interactDistance,hovered?Color.green:Color.red);
+            else hovered = null;
+        } else hovered = null;
+
+        interactionPrompt.text = hovered!=null? hovered.Tooltip:"";
+        if (hovered != null)
+            interactionPrompt.color = hovered.isBlocked() ? new Color(1, 1, 1, 0.5f) : Color.white;
+        Debug.DrawRay(playerCameraTransform.position,playerCameraTransform.forward*interactDistance,hovered!=null?Color.green:Color.red);
     }
 }
