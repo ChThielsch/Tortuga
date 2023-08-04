@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
@@ -13,6 +14,9 @@ public class Player : MonoBehaviour
     [Space]
     public float topConstrain;
     public float bottomConstrain;
+
+    public UnityEvent OnBoostDown = new UnityEvent();
+    public UnityEvent OnBoostUp = new UnityEvent();
 
     private TurtleController m_turtleController;
     private Vector2 m_movementInput;
@@ -30,15 +34,13 @@ public class Player : MonoBehaviour
         boostReference.action.started += ctx =>
         {
             m_boostInput = true;
-            if (transform.position.y < topConstrain)
-            {
-                m_turtleController.Swim();
-            }
+            OnBoostDown.Invoke();
         };
 
         boostReference.action.canceled += ctx =>
         {
             m_boostInput = false;
+            OnBoostUp.Invoke();
         };
     }
 
