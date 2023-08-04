@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a32e10b2177f643b5a45eaa82248fe, type: 3}
   m_Name: FreeMovement
   m_EditorClassIdentifier: 
-  forceStrength: 20
+  forceStrength: 10
   forceMode: 5
   swimDuration: 1.25
   paddleCurve:
@@ -39,6 +39,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  rollMaxAngle: 35
+  pitchMaxAngle: 33
+  yawMaxAngle: 45
+  rollTorque: 0.01
+  pitchTorque: 0.002
+  yawTorque: 0.14
   forceCurve:
     serializedVersion: 2
     m_Curve:
@@ -63,12 +69,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxSpeed: 20
+  maxSpeed: 10
   accelerationFactor: 0.1
   decelerationFactor: 5
   weight: 0.75
-  rollMaxAngle: 35
-  pitchMaxAngle: 33
-  rollTorque: 0.01
-  pitchTorque: 0.002
-  yawTorque: 0.14
