@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         m_turtleController = GetComponent<TurtleController>();
+        m_turtleController.m_player = this;
         InitiateInput();
     }
 
@@ -51,8 +52,8 @@ public class Player : MonoBehaviour
 
         if (transform.position.y <= bottomConstrain || (m_boostInput && transform.position.y < topConstrain))
         {
-            m_turtleController.Swim();
-            turtleAnimator.SetTrigger(Constants.AnimatorPush);
+            //m_turtleController.Swim();
+            //turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
 
         turtleAnimator.SetFloat(Constants.AnimatorRotationZ, -m_movementInput.y, 1f, Time.deltaTime);

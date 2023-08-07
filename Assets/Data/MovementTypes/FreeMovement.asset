@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a32e10b2177f643b5a45eaa82248fe, type: 3}
   m_Name: FreeMovement
   m_EditorClassIdentifier: 
-  forceStrength: 10
+  maxBoostStrength: 30
+  perfectBoostStrength: 40
+  boostDuration: 0.5
+  perfectBoostDuration: 0.25
+  boostThreshold: 0.2
   forceMode: 5
   swimDuration: 1.25
   paddleCurve:

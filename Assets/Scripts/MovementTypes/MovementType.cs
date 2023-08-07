@@ -4,7 +4,14 @@ public class MovementType : ScriptableObject
 {
     [Divider("Fins")]
     [Tooltip("The maximum force applied to the turtle along the given curve")]
-    public float forceStrength;
+    public float maxBoostStrength;
+    public float perfectBoostStrength;
+
+    public float boostDuration;
+    public float perfectBoostDuration;
+
+    public float boostThreshold;
+
     [Tooltip("The default unity force mode of the force")]
     public ForceMode forceMode;
     [Tooltip("The duration in seconds during which the force is applied along the curve")]

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01d9a8ef9e471a43b0352a91a487145, type: 3}
   m_Name: ForwardMovement
   m_EditorClassIdentifier: 
-  maxForceX: 300
-  maxForceZ: 2
-  forceStrength: 20
+  maxBoostStrength: 10
+  boostDuration: 2
+  boostThreshold: 1
   forceMode: 5
   swimDuration: 1.25
   paddleCurve:
@@ -41,16 +41,38 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  rotationSpeedX: 1
-  rotationSpeedY: 1
-  rotationSpeedZ: 1
-  minAngleX: 25
-  maxAngleX: 45
-  maxAngleY: 15
-  maxAngleZ: 45
   rollMaxAngle: 35
   pitchMaxAngle: 33
   yawMaxAngle: 45
   rollTorque: 0.01
   pitchTorque: 0.002
   yawTorque: 0.14
+  maxYRotationAngle: 0
+  forceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxSpeed: 10
+  accelerationFactor: 0.1
+  decelerationFactor: 5
+  weight: 0.5
