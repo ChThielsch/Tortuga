@@ -48,7 +48,7 @@ MonoBehaviour:
   _flockBox: {fileID: 0}
   shape:
     type: 0
-    radius: 0.25
+    radius: 0.5
   debugDrawShape: 0
   tagSearchableOutsideBounds: 0
   activeSettings: {fileID: 11400000, guid: d5ac5df9a4294ac4b9bcec5c5c22e45c, type: 2}
@@ -79,7 +79,7 @@ Transform:
   m_GameObject: {fileID: 4257655873463447650}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.125, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.125, y: 0.5, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4675184808742314929}

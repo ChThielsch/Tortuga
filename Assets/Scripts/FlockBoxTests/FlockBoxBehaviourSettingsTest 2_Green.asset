@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  weight: 2
+  weight: 10
   useTagFilter: 0
   filterTags: []
   drawDebug: 0
@@ -68,7 +68,7 @@ MonoBehaviour:
   debugDrawSteering: 0
   debugDrawProperties: 0
   foldout: 1
-  lookAheadSeconds: 1
+  lookAheadSeconds: 2
   clearance: 0
   mask:
     serializedVersion: 2

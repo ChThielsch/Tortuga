@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Name: Follower 1
   m_EditorClassIdentifier: 
   maxForce: 10
-  maxSpeed: 4
+  maxSpeed: 6
   containmentBehavior: {fileID: -5393261117582967977}
   behaviors:
   - {fileID: 8288312265726422298}

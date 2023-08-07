@@ -188,4 +188,4 @@ MonoBehaviour:
   agentPrefab: {fileID: 1173094384172586917, guid: c30bd2d68bea0064791f4a05d7604bd3,
     type: 3}
   swarmSize: 20
-  lureTag: 1
+  lureTag: 2

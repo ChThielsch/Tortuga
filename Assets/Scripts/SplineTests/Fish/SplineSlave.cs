@@ -202,10 +202,12 @@ public class SplineSlaveEditor : Editor
         {
             splineSlave.prefab = prefab;
             splineSlave.SetSlaveProfile(prefab);
+            EditorUtility.SetDirty(splineSlave);
         }
         else if (GUILayout.Button("Reset Overrides"))
         {
             splineSlave.SetSlaveProfile(prefab);
+            EditorUtility.SetDirty(splineSlave);
         }
 
         DrawDefaultInspector();

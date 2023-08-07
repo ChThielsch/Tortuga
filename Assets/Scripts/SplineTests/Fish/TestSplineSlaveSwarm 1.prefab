@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfa577a1c07162f43aa7a3872dfce7b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
+  moveSpeed: 2
   speedOffsetCurve:
     serializedVersion: 2
     m_Curve:
@@ -188,4 +188,4 @@ MonoBehaviour:
   agentPrefab: {fileID: 1173094384172586917, guid: 7706ca320dfb85947ba25ead18963534,
     type: 3}
   swarmSize: 20
-  lureTag: 0
+  lureTag: 1
