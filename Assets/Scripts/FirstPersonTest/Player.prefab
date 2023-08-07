@@ -174,6 +174,7 @@ GameObject:
   - component: {fileID: 1066412234524619615}
   - component: {fileID: 4400904674930504202}
   - component: {fileID: 2335499890597264227}
+  - component: {fileID: 945091910761390233}
   - component: {fileID: 6708446213720075320}
   m_Layer: 0
   m_Name: Player
@@ -236,7 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfacee19f3341f14caf5af0a978ab146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 6874043766773640340}
   sprintReference: {fileID: -7128903740036831083, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
     type: 3}
   lookReference: {fileID: 2850611683010421183, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
@@ -245,10 +245,65 @@ MonoBehaviour:
     type: 3}
   interactReference: {fileID: 8834852665190570388, guid: ec252b6f93dcd6c4f8bfc7010364ea07,
     type: 3}
-  MovementSpeed: 1
+  lookInput: {x: 0, y: 0}
+  moveInput: {x: 0, y: 0}
+  MovementSpeed: 3
+  smoothMovement: 5
   Gravity: 9.8
   horizontalSpeed: 1
   verticalSpeed: 1
+  cam: {fileID: 6874043766773640340}
+  interactDistance: 2
+  interactionPrompt: {fileID: 0}
+--- !u!114 &945091910761390233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6924175659365597345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3ae4e7cd8c84949be544a6c7397dd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -0.46539992
+      inSlope: -0.000000019092113
+      outSlope: -0.000000019092113
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.53676456
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: -0.46539992
+      inSlope: 0.0043325746
+      outSlope: 0.0043325746
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 1
+    m_RotationOrder: 4
+  bobStrength: 0.1
+  bobFrequency: 3
+  returnPosition: 0
+  bobReturnSpeed: 5
 --- !u!114 &6708446213720075320
 MonoBehaviour:
   m_ObjectHideFlags: 0

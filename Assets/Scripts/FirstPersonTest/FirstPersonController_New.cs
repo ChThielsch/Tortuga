@@ -14,13 +14,16 @@ public class FirstPersonController_New:MonoBehaviour
     public InputActionReference interactReference;
 
     private bool isSprinting;
-    private Vector2 lookInput;
-    private Vector2 moveInput;
+    [HideInInspector]public Vector2 
+        lookInput,
+        moveInput;
 
     [Header("Movement")]
     public float MovementSpeed = 1;
+    public float smoothMovement = 5;
     public float Gravity = 9.8f;
     private float fallVelocity = 0;
+    private Vector3 moveVelocity,targetMoveVelocity;
     CharacterController characterController;
 
     [Header("Rotation")]
@@ -40,7 +43,6 @@ public class FirstPersonController_New:MonoBehaviour
         characterController = GetComponent<CharacterController>();
         InitiateInput();
     }
-
     private void InitiateInput()
     {
         sprintReference.action.started += ctx =>
@@ -68,17 +70,26 @@ public class FirstPersonController_New:MonoBehaviour
         };
     }
 
-
     void Update()
     {
         //UpdateInput
         lookInput = lookReference.action.ReadValue<Vector2>();
         moveInput = movementReference.action.ReadValue<Vector2>();
 
+        HandleMovement();
+        HandleRotation();
+
+        UpdateHover();
+    }
+
+    public void HandleMovement()
+    {
         // player movement - forward, backward, left, right
         float horizontal = -moveInput.x * MovementSpeed;
         float vertical = moveInput.y * MovementSpeed;
-        characterController.Move((transform.right * horizontal + transform.forward * vertical) * Time.deltaTime);
+        targetMoveVelocity =(transform.right * horizontal + transform.forward * vertical);
+        moveVelocity = Vector3.Lerp(moveVelocity, targetMoveVelocity, 1f / smoothMovement);
+        characterController.Move(moveVelocity * Time.deltaTime);
 
         // Gravity
         if (characterController.isGrounded)
@@ -88,7 +99,9 @@ public class FirstPersonController_New:MonoBehaviour
             fallVelocity -= Gravity * Time.deltaTime;
             characterController.Move(new Vector3(0, fallVelocity, 0));
         }
-
+    }
+    public void HandleRotation()
+    {
         float mouseX = lookInput.x * horizontalSpeed;
         float mouseY = lookInput.y * verticalSpeed;
 
@@ -98,10 +111,7 @@ public class FirstPersonController_New:MonoBehaviour
 
         cam.transform.localEulerAngles = new Vector3(xRotation, 0, 0.0f);
         transform.localEulerAngles= new Vector3(0, yRotation, 0.0f);
-
-        UpdateHover();
     }
-
     public void UpdateHover()
     {
         RaycastHit hit;
