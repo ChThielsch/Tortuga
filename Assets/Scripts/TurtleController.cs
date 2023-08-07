@@ -168,6 +168,7 @@ public class TurtleController : MonoBehaviour
             m_boostValue = 0;
         }
 
+        m_perfectBoost = false;
         m_isBoosting = false;
     }
 
