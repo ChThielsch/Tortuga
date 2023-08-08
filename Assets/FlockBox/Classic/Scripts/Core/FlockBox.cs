@@ -15,8 +15,8 @@ namespace CloudFine.FlockBox
     {
         public static Action<FlockBox> OnValuesModified;
 
-        private Dictionary<int, HashSet<Agent>> cellToAgents = new Dictionary<int, HashSet<Agent>>(); //get all agents in a cell
-        private Dictionary<Agent, HashSet<int>> agentToCells = new Dictionary<Agent, HashSet<int>>(); //get all cells an agent is in
+        public Dictionary<int, HashSet<Agent>> cellToAgents = new Dictionary<int, HashSet<Agent>>(); //get all agents in a cell
+        public Dictionary<Agent, HashSet<int>> agentToCells = new Dictionary<Agent, HashSet<int>>(); //get all cells an agent is in
 
         private List<Agent> allAgents = new List<Agent>();
 
@@ -25,14 +25,14 @@ namespace CloudFine.FlockBox
 
         
         [SerializeField]
-        private float dimensions_x = 10;
+        public float dimensions_x = 10;
         [SerializeField]
-        private float dimensions_y = 10;
+        public float dimensions_y = 10;
         [SerializeField]
-        private float dimensions_z = 10;
+        public float dimensions_z = 10;
         
         [SerializeField]
-        private float cellSize = 10;
+        public float cellSize = 10;
 
         public Vector3 Dimensions
         {
@@ -747,7 +747,7 @@ namespace CloudFine.FlockBox
         }
 
 
-        private int WorldPositionToHash(Vector3 position)
+        public int WorldPositionToHash(Vector3 position)
         {
             return WorldPositionToHash(position.x, position.y, position.z);
         }
