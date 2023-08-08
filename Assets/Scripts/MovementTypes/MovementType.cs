@@ -12,8 +12,6 @@ public class MovementType : ScriptableObject
 
     public float boostThreshold;
 
-    [Tooltip("The default unity force mode of the force")]
-    public ForceMode forceMode;
     [Tooltip("The duration in seconds during which the force is applied along the curve")]
     public float swimDuration = 1.25f;
     [Tooltip("The curve on which the force is applied upto its maximun forceStrength for the duration of swimDuration")]
