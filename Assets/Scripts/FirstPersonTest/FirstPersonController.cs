@@ -1,69 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FirstPersonController : MonoBehaviour
+[RequireComponent(typeof(CharacterController))]
+public class FirstPersonController:MonoBehaviour
 {
+
     [Divider("Input")]
     public InputActionReference sprintReference;
     public InputActionReference lookReference;
     public InputActionReference movementReference;
     public InputActionReference interactReference;
 
-    [Divider("Variables")]
-    [Header("Gravity")]
-    [SerializeField] private LayerMask groundLayerMask;
-    public float fallMultiplier = 2.5f;
-    [ShowOnly][SerializeField]private bool isGrounded;
-    Vector3 groundNormal;
-
+    private bool isSprinting;
+    [HideInInspector]public Vector2 
+        lookInput,
+        moveInput;
 
     [Header("Movement")]
-    [Range(0,7)]public float normalSpeed = 3f;
-    [Range(0, 7)] public float sprintSpeed = 5f;
-    [Range(0, 30)] public float smoothMovement = 12f;
-    [Range(0, 10)] public float movementStopMultiplier = 2f;
+    public float MovementSpeed = 1;
+    public float smoothMovement = 5;
+    public float Gravity = 9.8f;
+    private float fallVelocity = 0;
+    private Vector3 moveVelocity,targetMoveVelocity;
+    CharacterController characterController;
 
     [Header("Rotation")]
-    //We need seperate speeds for different control schemes once those are implemented bc these are way to high for mouse.
-    [Range(1, 1500)] public float rotationSpeed = 1000;
-    [Range(1, 1500)] public float sprintRotationSpeed = 1500f;
-    [Range(0, 20)] public float smoothRotation = 2f;
+    public float horizontalSpeed = 1f;
+    public float verticalSpeed = 1f;
+    private float xRotation = 0.0f;
+    private float yRotation = 0.0f;
+    public Transform cam;
 
     [Header("Interaction")]
     [Range(0, 5)] public float interactDistance = 2f;
-
-    [Header("Status")]
-    [ShowOnly] [SerializeField] bool isSprinting;
-    [ReadOnly][SerializeField] Vector2 
-        moveInput,
-        lookInput;
-
-    [ReadOnly][SerializeField]Vector3 moveVelocity = Vector3.zero;
-    [ReadOnly] [SerializeField]Vector3 moveTargetVelocity=Vector3.zero;
-
-    [ReadOnly] [SerializeField] Vector3 currentLook = Vector3.zero;
-
-    [Divider("Components")]
-    public Transform playerCameraTransform;
-
-    private Rigidbody rb;
     [ShowOnly] public IInteractable hovered;
-
-
     public TMPro.TMP_Text interactionPrompt;
-
-    public Vector2 GetMovementInput()
-    {
-        return moveInput;
-    }
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        rb = GetComponent<Rigidbody>();
-
+        characterController = GetComponent<CharacterController>();
         InitiateInput();
     }
     private void InitiateInput()
@@ -80,7 +57,7 @@ public class FirstPersonController : MonoBehaviour
 
         interactReference.action.started += ctx =>
         {
-            if (hovered!=null)
+            if (hovered != null)
             {
                 if (hovered.isBlocked())
                     Debug.Log("Can't Interacted with: " + hovered.name);
@@ -93,86 +70,74 @@ public class FirstPersonController : MonoBehaviour
         };
     }
 
-    private void Update()
+    void Update()
     {
-        UpdateHover();
-        UpdateGroundCheck();
+        //UpdateInput
+        lookInput = lookReference.action.ReadValue<Vector2>();
+        moveInput = movementReference.action.ReadValue<Vector2>();
 
         HandleMovement();
-        HandleMouseLook();
+        HandleRotation();
+
+        UpdateHover();
     }
 
-    private void UpdateGroundCheck()
+    public void HandleMovement()
     {
-        float groundRaycastDistance = 1.25f;
-        RaycastHit hit;
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, groundRaycastDistance, groundLayerMask);
-        groundNormal = isGrounded ? hit.normal : Vector3.up;
+        // player movement - forward, backward, left, right
+        float horizontal = -moveInput.x * MovementSpeed;
+        float vertical = moveInput.y * MovementSpeed;
+        targetMoveVelocity =(transform.right * horizontal + transform.forward * vertical);
+        moveVelocity = Vector3.Lerp(moveVelocity, targetMoveVelocity, 1f / smoothMovement);
+        characterController.Move(moveVelocity * Time.deltaTime);
 
-        Debug.DrawRay(transform.position, Vector3.down * groundRaycastDistance, isGrounded ? Color.green : Color.red);
-    }
-
-    private void HandleMovement()
-    {
-        moveInput = movementReference.action.ReadValue<Vector2>();
-        float moveHorizontal = -moveInput.x;
-        float moveVertical = moveInput.y;
-
-        Vector3 moveDirection = (transform.forward * moveVertical + transform.right * moveHorizontal).normalized;
-
-
-        float slopeAngle= Vector3.Angle(groundNormal, Vector3.up);
-        // Apply movement modification on slopes
-        if (slopeAngle > 0f)
+        // Gravity
+        if (characterController.isGrounded)
+            fallVelocity = 0;
+        else
         {
-            Vector3 slopeDirection = Vector3.Cross(Vector3.Cross(groundNormal, moveDirection), groundNormal).normalized;
-            moveDirection = Vector3.ProjectOnPlane(moveDirection, groundNormal).normalized;
+            fallVelocity -= Gravity * Time.deltaTime;
+            characterController.Move(new Vector3(0, fallVelocity, 0));
         }
-
-        moveTargetVelocity = moveDirection * (isSprinting ? sprintSpeed : normalSpeed);
-
-        moveVelocity = Vector3.Lerp(moveVelocity, moveTargetVelocity, 1f / smoothMovement);
-
-        Vector3 gravVelocity= Vector3.zero;
-
-            gravVelocity= Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        Vector3 totalVelocity = moveVelocity + gravVelocity;
-
-        rb.velocity = totalVelocity;
-
-        Debug.DrawRay(transform.position, rb.velocity, Color.green);
     }
-    private void HandleMouseLook()
+    public void HandleRotation()
     {
-        lookInput = lookReference.action.ReadValue<Vector2>();
+        float mouseX = lookInput.x * horizontalSpeed;
+        float mouseY = lookInput.y * verticalSpeed;
 
-        Vector3 vel = currentLook;
-        vel.x= lookInput.x;
-        vel.y= lookInput.y;
-        vel *= Time.deltaTime * (isSprinting ? sprintRotationSpeed : rotationSpeed);
-        currentLook = Vector3.Slerp(currentLook, currentLook+vel, .1f);
+        yRotation += mouseX;
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -70,70);
 
-        playerCameraTransform.localRotation = Quaternion.AngleAxis(-currentLook.y, Vector3.right);
-        transform.localRotation = Quaternion.AngleAxis(currentLook.x, transform.up);
+        cam.transform.localEulerAngles = new Vector3(xRotation, 0, 0.0f);
+        transform.localEulerAngles= new Vector3(0, yRotation, 0.0f);
     }
-
     public void UpdateHover()
     {
         RaycastHit hit;
         hovered = null;
-        if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out hit, interactDistance))
+        if (Physics.Raycast(cam.position, cam.forward, out hit, interactDistance))
         {
-            IInteractable interactable= hit.collider.GetComponent<IInteractable>();
-            if (interactable!=null)
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            if (interactable != null)
             {
                 hovered = interactable;
-            }
-            else hovered = null;
-        } else hovered = null;
+                Debug.Log(hovered + " is true");
+                Debug.DrawLine(cam.position, hit.point, Color.green);
 
-        interactionPrompt.text = hovered!=null? hovered.Tooltip:"";
+            }
+            else
+            {
+                Debug.DrawLine(cam.position, hit.point, Color.red);
+            }
+        }
+        else
+        {
+            Debug.DrawRay(cam.position, cam.forward * interactDistance, Color.red);
+        }
+
+        interactionPrompt.text = hovered != null ? hovered.Tooltip : "";
         if (hovered != null)
             interactionPrompt.color = hovered.isBlocked() ? new Color(1, 1, 1, 0.5f) : Color.white;
-        Debug.DrawRay(playerCameraTransform.position,playerCameraTransform.forward*interactDistance,hovered!=null?Color.green:Color.red);
     }
 }

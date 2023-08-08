@@ -248,7 +248,7 @@ MonoBehaviour:
   lookInput: {x: 0, y: 0}
   moveInput: {x: 0, y: 0}
   MovementSpeed: 3
-  smoothMovement: 5
+  smoothMovement: 12
   Gravity: 9.8
   horizontalSpeed: 1
   verticalSpeed: 1
@@ -301,7 +301,7 @@ MonoBehaviour:
     m_PostInfinity: 1
     m_RotationOrder: 4
   bobStrength: 0.1
-  bobFrequency: 3
+  bobFrequency: 2
   returnPosition: 0
   bobReturnSpeed: 5
 --- !u!114 &6708446213720075320

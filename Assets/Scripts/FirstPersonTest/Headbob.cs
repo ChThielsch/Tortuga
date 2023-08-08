@@ -13,12 +13,12 @@ public class Headbob : MonoBehaviour
     private Vector3 originalCameraLocalPosition;
     private float timer;
 
-    private FirstPersonController_New firstPersonController;
+    private FirstPersonController firstPersonController;
     private Transform cam;
 
     private void Start()
     {
-        firstPersonController = GetComponent<FirstPersonController_New>();
+        firstPersonController = GetComponent<FirstPersonController>();
         cam = firstPersonController.cam;
         originalCameraLocalPosition = cam.localPosition;
     }
