@@ -155,5 +155,9 @@ public class FreeMovement : MovementType
         {
             _rigidbody.AddForce(forceVector, ForceMode.Force);
         }
+        else
+        {
+            Debug.LogError("Too fast!");
+        }
     }
 }
