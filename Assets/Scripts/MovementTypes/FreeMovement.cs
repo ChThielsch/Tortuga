@@ -115,6 +115,7 @@ public class FreeMovement : MovementType
         else
         {
             float maxForce = maxSpeed * _swimInput;
+
             float curveValue = forceCurve.Evaluate(_swimInput);
             m_targetForce = Mathf.Lerp(0f, maxForce, curveValue);
         }

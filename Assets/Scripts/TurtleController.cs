@@ -158,8 +158,8 @@ public class TurtleController : MonoBehaviour
         if (m_isBoosting && m_boostValue > currentMovementType.boostThreshold)
         {
             //Call SwimRoutine with new build up forceStrength
-            StartCoroutine(SwimRoutine(Utils.GetDirectionBetweenPoints(leftFin.position, leftFinDirectionHandle.position)));
-            StartCoroutine(SwimRoutine(Utils.GetDirectionBetweenPoints(rightFin.position, rightFinDirectionHandle.position)));
+            StartCoroutine(SwimRoutine(leftFin, leftFinDirectionHandle));
+            StartCoroutine(SwimRoutine(rightFin, rightFinDirectionHandle));
             m_player.turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
         else
@@ -206,7 +206,7 @@ public class TurtleController : MonoBehaviour
         m_perfectBoost = false;
     }
 
-    public IEnumerator SwimRoutine(Vector3 _swimForceDirection)
+    public IEnumerator SwimRoutine(Transform _originPosition, Transform _targetPosition)
     {
         m_swimBlock = true;
         float elapsedTime = 0f;
@@ -218,13 +218,10 @@ public class TurtleController : MonoBehaviour
             float curveValue = currentMovementType.paddleCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
             float currentForceStrength = Mathf.Lerp(initialForceStrength, m_boostValue, curveValue);
 
-            Vector3 swimDirection = Vector3.zero;
-            if (movementType == MovementTypeEnum.TopDown)
-            {
-                // Apply force in the direction the turtle is facing
-                swimDirection = transform.forward;
-            }
-            else
+            Vector3 _swimForceDirection = Utils.GetDirectionBetweenPoints(_originPosition.position, _targetPosition.position);
+            Vector3 swimDirection = transform.forward;
+
+            if (movementType != MovementTypeEnum.TopDown)
             {
                 // Apply force in the force direction
                 swimDirection = _swimForceDirection;
@@ -232,7 +229,7 @@ public class TurtleController : MonoBehaviour
 
             Vector3 swimForce = swimDirection * currentForceStrength;
 
-            myRigidbody.AddForce(swimForce, currentMovementType.forceMode);
+            myRigidbody.AddForce(swimForce, ForceMode.Acceleration);
 
             elapsedTime += Time.deltaTime;
             yield return null;

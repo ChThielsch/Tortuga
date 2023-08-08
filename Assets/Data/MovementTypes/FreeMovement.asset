@@ -12,39 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a32e10b2177f643b5a45eaa82248fe, type: 3}
   m_Name: FreeMovement
   m_EditorClassIdentifier: 
-  maxBoostStrength: 30
-  perfectBoostStrength: 40
+  maxBoostStrength: 12
+  perfectBoostStrength: 15
   boostDuration: 0.5
   perfectBoostDuration: 0.25
   boostThreshold: 0.2
-  forceMode: 5
-  swimDuration: 1.25
+  swimDuration: 3
   paddleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 2
-      outSlope: 2
+      inSlope: 6.7367725
+      outSlope: 6.7367725
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.026032101
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
+      time: 0.99561405
+      value: 0.0068452656
+      inSlope: -0.037801724
+      outSlope: -0.037801724
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.13443261
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   rollMaxAngle: 35
-  pitchMaxAngle: 33
+  pitchMaxAngle: 45
   yawMaxAngle: 45
   rollTorque: 0.01
   pitchTorque: 0.002
