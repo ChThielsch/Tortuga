@@ -165,9 +165,45 @@ public class ForwardMovement : MovementType
         Vector3 forceVector = m_currentForce * blendedForce;
 
         // Apply the force to the Rigidbody only if the velocity is below the maximum speed.
-        if (_rigidbody.velocity.magnitude < maxSpeed)
+        if (_rigidbody.velocity.magnitude < currentMaxSpeed)
         {
             _rigidbody.AddForce(forceVector, ForceMode.Force);
         }
+
+        if (currentMaxSpeed > maxSpeed)
+        {
+            currentMaxSpeed = Mathf.Lerp(currentMaxSpeed, maxSpeed, Time.fixedDeltaTime * smoothingFactor);
+        }
+        else
+        {
+            currentMaxSpeed = maxSpeed;
+        }
+    }
+
+    public override IEnumerator BoostRoutine(Transform _originPosition, Transform _targetPosition, Rigidbody _rigidbody)
+    {
+        swimBlock = true;
+        float elapsedTime = 0f;
+        float initialForceStrength = 0f;
+
+        while (elapsedTime < boostDuration)
+        {
+            float normalizedTime = elapsedTime / boostDuration;
+            float curveValue = boostCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
+            float currentForceStrength = Mathf.Lerp(initialForceStrength, boostValue, curveValue);
+
+            Vector3 swimDirection = Utils.GetDirectionBetweenPoints(_originPosition.position, _targetPosition.position);
+            Vector3 swimForce = swimDirection * currentForceStrength;
+
+            _rigidbody.AddForce(swimForce, ForceMode.Acceleration);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        swimBlock = false;
+        //Reset boost
+        boostValue = 0;
+        currentMaxSpeed = _rigidbody.velocity.magnitude;
     }
 }

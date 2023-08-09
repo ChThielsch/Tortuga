@@ -14,34 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxBoostStrength: 12
   perfectBoostStrength: 15
-  boostDuration: 0.5
+  boostBuildUpDuration: 1.25
   perfectBoostDuration: 0.25
   boostThreshold: 0.2
-  swimDuration: 3
-  paddleCurve:
+  boostDuration: 1.25
+  boostCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 6.7367725
-      outSlope: 6.7367725
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.026032101
+      outWeight: 0
     - serializedVersion: 3
-      time: 0.99561405
-      value: 0.0068452656
-      inSlope: -0.037801724
-      outSlope: -0.037801724
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.13443261
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  isBoosting: 0
+  perfectBoost: 0
+  boostValue: 0
+  swimBlock: 0
+  currentMaxSpeed: 10.000005
   rollMaxAngle: 35
   pitchMaxAngle: 45
   yawMaxAngle: 45

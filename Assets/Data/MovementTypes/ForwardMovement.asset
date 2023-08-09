@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b01d9a8ef9e471a43b0352a91a487145, type: 3}
   m_Name: ForwardMovement
   m_EditorClassIdentifier: 
-  maxBoostStrength: 10
-  boostDuration: 2
-  boostThreshold: 1
-  forceMode: 5
-  swimDuration: 1.25
-  paddleCurve:
+  maxBoostStrength: 12
+  perfectBoostStrength: 15
+  boostBuildUpDuration: 1.25
+  perfectBoostDuration: 0.25
+  boostThreshold: 0.2
+  boostDuration: 1.25
+  boostCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -41,6 +42,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  isBoosting: 0
+  perfectBoost: 0
+  boostValue: 0
+  swimBlock: 0
+  currentMaxSpeed: 0
   rollMaxAngle: 35
   pitchMaxAngle: 33
   yawMaxAngle: 45

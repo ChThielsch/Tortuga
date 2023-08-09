@@ -19,7 +19,6 @@ public class TurtleController : MonoBehaviour
     public Transform rightFin;
     public Transform rightFinDirectionHandle;
 
-    private bool m_swimBlock;
     internal Player m_player;
 
     private void OnDrawGizmos()
@@ -27,17 +26,24 @@ public class TurtleController : MonoBehaviour
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(myRigidbody.centerOfMass, 0.05f);
 
-        if (m_perfectBoost)
+        if (currentMovementType)
         {
-            Gizmos.color = Color.green;
-        }
-        else if (m_isBoosting)
-        {
-            Gizmos.color = Color.yellow;
-        }
-        else if (m_swimBlock)
-        {
-            Gizmos.color = Color.red;
+            if (currentMovementType.perfectBoost)
+            {
+                Gizmos.color = Color.green;
+            }
+            else if (currentMovementType.isBoosting)
+            {
+                Gizmos.color = Color.yellow;
+            }
+            else if (currentMovementType.swimBlock)
+            {
+                Gizmos.color = Color.red;
+            }
+            else
+            {
+                Gizmos.color = Color.gray;
+            }
         }
         else
         {
@@ -105,14 +111,6 @@ public class TurtleController : MonoBehaviour
         ChangeMovementType((MovementTypeEnum)_movementIndex);
     }
 
-    public void Swim()
-    {
-        if (currentMovementType is null)
-        {
-            return;
-        }
-    }
-
     /// <summary>
     /// Moves the turtle based on the input provided and applies a continuous force in the direction of rotation.
     /// </summary>
@@ -136,107 +134,44 @@ public class TurtleController : MonoBehaviour
         }
 
         //Start coroutine which over time increases boost up until max boost is reached
-        if (!m_isBoosting && !m_swimBlock)
+        if (!currentMovementType.isBoosting && !currentMovementType.swimBlock)
         {
-            buildUpRoutine = StartCoroutine(BuildUpBoostRoutine());
+            m_buildUpBoostRoutine = StartCoroutine(currentMovementType.BuildUpBoostRoutine());
             m_player.turtleAnimator.SetTrigger(Constants.AnimatorPull);
         }
     }
 
-    private Coroutine buildUpRoutine;
+    private Coroutine m_buildUpBoostRoutine;
 
     public void ReleaseBoost()
     {
-        //Stop BuildUpBoost Routine
-        if (buildUpRoutine != null)
+        if (currentMovementType is null)
         {
-            StopCoroutine(buildUpRoutine);
-            buildUpRoutine = null;
+            return;
+        }
+
+        //Stop BuildUpBoost Routine
+        if (m_buildUpBoostRoutine != null)
+        {
+            StopCoroutine(m_buildUpBoostRoutine);
+            m_buildUpBoostRoutine = null;
         }
 
         //If build up boost is above threshhold
-        if (m_isBoosting && m_boostValue > currentMovementType.boostThreshold)
+        if (currentMovementType.isBoosting && currentMovementType.boostValue > currentMovementType.boostThreshold)
         {
             //Call SwimRoutine with new build up forceStrength
-            StartCoroutine(SwimRoutine(leftFin, leftFinDirectionHandle));
-            StartCoroutine(SwimRoutine(rightFin, rightFinDirectionHandle));
+            StartCoroutine(currentMovementType.BoostRoutine(leftFin, leftFinDirectionHandle, myRigidbody));
+            StartCoroutine(currentMovementType.BoostRoutine(rightFin, rightFinDirectionHandle, myRigidbody));
             m_player.turtleAnimator.SetTrigger(Constants.AnimatorPush);
         }
         else
         {
             //Reset boost
-            m_boostValue = 0;
+            currentMovementType.boostValue = 0;
         }
 
-        m_perfectBoost = false;
-        m_isBoosting = false;
-    }
-
-    private bool m_isBoosting = false;
-    private bool m_perfectBoost = false;
-    [ShowOnly] public float m_boostValue = 0f; // Current boost value
-
-    private IEnumerator BuildUpBoostRoutine()
-    {
-        m_isBoosting = true;
-        float startTime = Time.time;
-        float endTime = startTime + currentMovementType.boostDuration;
-
-        while (Time.time < endTime)
-        {
-            float timeRatio = (Time.time - startTime) / currentMovementType.boostDuration;
-            m_boostValue = Mathf.Lerp(0f, currentMovementType.maxBoostStrength, timeRatio);
-            yield return null;
-        }
-
-        // Ensure the boost value reaches the max at the end
-        m_boostValue = currentMovementType.maxBoostStrength;
-
-        startTime = Time.time;
-        endTime = startTime + currentMovementType.perfectBoostDuration;
-        while (Time.time < endTime)
-        {
-            m_boostValue = currentMovementType.perfectBoostStrength;
-            m_perfectBoost = true;
-            yield return null;
-        }
-
-        // Ensure the boost value reaches the max at the end
-        m_boostValue = currentMovementType.maxBoostStrength;
-        m_perfectBoost = false;
-    }
-
-    public IEnumerator SwimRoutine(Transform _originPosition, Transform _targetPosition)
-    {
-        m_swimBlock = true;
-        float elapsedTime = 0f;
-        float initialForceStrength = 0f; // Initial force strength
-
-        while (elapsedTime < currentMovementType.swimDuration)
-        {
-            float normalizedTime = elapsedTime / currentMovementType.swimDuration;
-            float curveValue = currentMovementType.paddleCurve.Evaluate(normalizedTime); // Evaluate the animation curve at the normalized time
-            float currentForceStrength = Mathf.Lerp(initialForceStrength, m_boostValue, curveValue);
-
-            Vector3 _swimForceDirection = Utils.GetDirectionBetweenPoints(_originPosition.position, _targetPosition.position);
-            Vector3 swimDirection = transform.forward;
-
-            if (movementType != MovementTypeEnum.TopDown)
-            {
-                // Apply force in the force direction
-                swimDirection = _swimForceDirection;
-            }
-
-            Vector3 swimForce = swimDirection * currentForceStrength;
-
-            myRigidbody.AddForce(swimForce, ForceMode.Acceleration);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        m_swimBlock = false;
-        //Reset boost
-        m_boostValue = 0;
+        currentMovementType.perfectBoost = false;
+        currentMovementType.isBoosting = false;
     }
 }
